@@ -1,6 +1,6 @@
 --- 
-title: "YOUR TITLE HERE"
-author: "YOUR NAMES HERE"
+title: "VaccinationCoverageDemographics"
+author: "Ethan Evans, Longyuan Gao, Jianxun Guo"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
