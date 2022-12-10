@@ -18,10 +18,10 @@ library(lubridate)
 
 ```{r}
 #READ DATA
-flu<-read.csv("resources/flu_vax_coverage.csv")
-education <- read.csv("resources/education.csv")
-pop<- read.csv("resources/population.csv")
-income<- read.csv("resources/income.csv")
+flu<-read.csv("data/flu_vax_coverage.csv")
+education <- read.csv("data/education.csv")
+pop<- read.csv("data/population.csv")
+income<- read.csv("data/income.csv")
 
 demo_df <- data.frame() #This df will contain demographic data
 ```
@@ -167,8 +167,10 @@ us_by_year <- us_by_year%>% filter(Vaccine=="Seasonal Influenza", #H1N1 vaccines
 
 #Try plotting to see if I transformed the data correctly
 us_by_year%>%
-ggplot()+
-  geom_line(aes(ym, Estimate....))
+  # filter(Season.Survey.Year == "2009-10" | Season.Survey.Year == "2014-15" | Season.Survey.Year == "2020-21") %>%
+  ggplot() +
+    geom_line(aes(ym, Estimate....)) + 
+    facet_grid(.~Season.Survey.Year)
 ```
 
 
