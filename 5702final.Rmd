@@ -18,10 +18,10 @@ library(lubridate)
 
 ```{r}
 #READ DATA
-flu<-read.csv("C:\\Users\\longy\\Downloads\\flu.csv")
-education <- read.csv("C:\\Users\\longy\\Downloads\\t.csv")
-pop<- read.csv("C:\\Users\\longy\\Downloads\\pop.csv")
-income<- read.csv("C:\\Users\\longy\\Downloads\\income.csv")
+flu<-read.csv("resources/flu_vax_coverage.csv")
+education <- read.csv("resources/education.csv")
+pop<- read.csv("resources/population.csv")
+income<- read.csv("resources/income.csv")
 
 demo_df <- data.frame() #This df will contain demographic data
 ```
