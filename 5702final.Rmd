@@ -1,0 +1,174 @@
+---
+title: "5702F"
+output: html_document
+date: "2022-12-09"
+---
+
+````{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+````
+
+## R Markdown
+
+```{r}
+library(dplyr)
+library(tidyverse)
+library(lubridate)
+```
+
+```{r}
+#READ DATA
+flu<-read.csv("C:\\Users\\longy\\Downloads\\flu.csv")
+education <- read.csv("C:\\Users\\longy\\Downloads\\t.csv")
+pop<- read.csv("C:\\Users\\longy\\Downloads\\pop.csv")
+income<- read.csv("C:\\Users\\longy\\Downloads\\income.csv")
+
+demo_df <- data.frame() #This df will contain demographic data
+```
+
+Data Transformation:
+
+Transform flu vaccine data by state:
+
+```{r}
+#Transform flu vax data: Date data is separated into 2 columns: Season.Survey.Year contains year info (the number after year is not month!), and Month contains month info.
+#Added columns: ym: date of the observation, in yyyy-mm-01 format (day doesn't matter)
+flu$ym <- as.Date(paste(stringi::stri_sub(flu$`Season.Survey.Year`, to = 4),"-", flu$Month, "-1", sep = ""))
+flu$`Estimate....` <- as.numeric(flu$`Estimate....`) #NA's!
+flu
+```
+
+Transform education data by state:
+
+NOTE: THIS DATA IS FROM 2021 CENCUS, SO IT IS BETTER TO BE COMBINED WITH 2021 FLU VACCINE DATA
+
+Added columns: high_school_higher_pop -counts total number of people who attained a degree > hight school over 18
+               
+```{r}
+rowname <- education$Label..Grouping.
+education <- mutate_all(education[str_detect(colnames(education),"Total..Estimate")],
+                        function(x){as.numeric(str_replace_all(x,",",""))})%>% t() %>% as.data.frame() 
+
+rownames(education)<- as.list(lapply(str_split(rownames(education),"\\.\\."),
+                                     function(x){str_replace_all(x[1],"\\."," ")})) #Transform state names
+colnames(education)<- rowname
+
+
+#add a column: high_school_higher_pop which counts total number of people who attained a degree > high  school over 18
+hs <- as.data.frame(rowSums(education[c(4:6,15)]))
+colnames(hs)<- "high_school_higher_pop"
+education$high_school_higher_pop<-  hs$high_school_higher_pop
+
+#store the added column in demo_df
+demo_df=education
+demo_df=demo_df[69]
+demo_df
+```
+
+Transform Pop Data by state and combine with education data:
+
+```{r}
+rowname <- pop$Label..Grouping.
+pop <- mutate_all(pop[str_detect(colnames(pop),"Total..Estimate")],
+                        function(x){as.numeric(str_replace_all(x,",",""))})%>% t() %>% as.data.frame()
+rownames(pop)<- as.list(lapply(str_split(rownames(pop),"\\.\\."),
+                                     function(x){str_replace_all(x[1],"\\."," ")})) #Transform state names
+colnames(pop)<- rowname
+demo_df$pop_over_18<- pop$`        18 years and over`
+demo_df
+```
+Calculate the ratios:
+
+```{r}
+demo_df<-demo_df %>% mutate(high_school_education_ratio=high_school_higher_pop/pop_over_18)
+```
+
+We also consider the ratio of elderly people (>= 65 years old) and children (<= 14 years old) in the population:
+
+```{r}
+pop<- pop %>% mutate(children_pop = pop$`        Under 5 years`+pop$`        5 to 9 years` +pop$`        10 to 14 years`,
+                     children_ratio = children_pop/`Total population`,
+                     elder_ratio = pop$`        65 years and over`/`Total population`)
+demo_df$tot_pop<- pop$`Total population`
+demo_df$children_pop <- pop$children_pop
+demo_df$children_ratio<- pop$children_ratio
+demo_df$elder_pop <- pop$`        65 years and over`
+demo_df$elder_ratio <- pop$elder_ratio
+
+```
+
+Next, include income data for households in 2021. NOTE: US DATA IS MISSING IN THIS DATASET!
+
+```{r}
+rowname <- income$Label..Grouping.
+income <- income[str_detect(colnames(income),"Households..Estimate")] %>% t() %>% as.data.frame()
+rownames(income)<- as.list(lapply(str_split(rownames(income),"\\.\\."),
+                                     function(x){str_replace_all(x[1],"\\."," ")})) #Transform state names
+colnames(income)<- rowname
+
+income$`Median income (dollars)` <- as.numeric(str_replace_all(income$`Median income (dollars)`,",",""))
+income$`Mean income (dollars)`<-as.numeric(str_replace_all(income$`Mean income (dollars)`,",",""))
+demo_df$`median_household_income` <- append(income$`Median income (dollars)`,NA)
+demo_df$`mean_household_income` <- append(income$`Mean income (dollars)`,NA)
+```
+
+Next, we add household poverty / wealth rates in each state. We define poverty line to be 14,999 USD/Year, and "walth line" to be 150,000 USD/Year.
+
+```{r}
+income <- income  %>% mutate(household_poverty_rate= as.numeric(str_replace_all(income$`    Less than $10,000`,"%",""))/100+
+                                          as.numeric(str_replace_all(income$`    $10,000 to $14,999`,"%",""))/100,
+                             household_wealth_rate=as.numeric(str_replace_all(income$`    $150,000 to $199,999`,"%",""))/100+
+                                          as.numeric(str_replace_all(income$`    $200,000 or more`,"%",""))/100)
+demo_df$household_poverty_rate = append(income$household_poverty_rate,NA)
+demo_df$household_wealth_rate = append(income$household_wealth_rate,NA)
+```
+
+Finally, we append flu shot coverage data by state to demo_df:
+
+```{r}
+#FLU SHOT COVERAGE BY STATE IN 2021
+shot_by_state = flu 
+
+#50 states + Washington DC
+shot_by_state <- shot_by_state %>% filter(Vaccine=="Seasonal Influenza", #H1N1 vaccines are only provided in 2009
+                     flu$`Geography.Type`=="States/Local Areas", 
+                     Dimension.Type =="Age",
+                     ym >= as.Date("2021-01-01"), #Missing June! Only 11 Months!
+                     Dimension=="≥6 Months") %>% 
+  group_by(Geography)%>%
+  arrange(ym) %>%
+  summarise("n_months"=n(),
+            "Mean Vaccine Coverage in 2021 (Percentage)" = mean(Estimate...., na.rm=TRUE))%>%
+  ungroup()
+
+demo_df$flu_shot_coverage_2021 <- append(shot_by_state$`Mean Vaccine Coverage in 2021 (Percentage)`,c(NA,NA))
+```
+#============================================================================================================
+We have finished building demo_df.The final result:
+Since we are missing some values for Puerto Rico, you can consider only include the first 51 rows.
+```{r}
+demo_df<-head(demo_df,51)
+```
+#============================================================================================================
+
+
+US FLU COVERAGE DATA BY YEAR(FOR TIME SERIES)
+
+```{r}
+
+us_by_year = flu
+
+us_by_year <- us_by_year%>% filter(Vaccine=="Seasonal Influenza", #H1N1 vaccines are only provided in 2009
+                     flu$`Geography.Type`=="HHS Regions/National", 
+                     Geography=="United States",
+                     Dimension.Type =="Age",
+                     Dimension=="≥6 Months") %>% arrange(ym)
+
+
+#Try plotting to see if I transformed the data correctly
+us_by_year%>%
+ggplot()+
+  geom_line(aes(ym, Estimate....))
+```
+
+
