@@ -1,8 +1,112 @@
+---
+output:
+  html_document:
+    fig_width: 20
+    fig_height: 8
+---
+
 # Data 
 
 ## Sources
 
+### Flu Vaccine Coverage Dataset
+Longyuan Gao is reponsible for collecting the data. The influenza vaccine coverage data is collected from CDC, which is stated in the previous chapter. The dataset is comprehensive in the sense that it records the coverage rate for every state and regions in the United States. Although there is some missing data (like the 2021 June coverage data), the overall quality is adequate enough for us to conduct visualizations. The data is collected from the National Immunization Survey-Flu (NIS-Flu), a national wide survey on vaccination coverage conducted by phone, and the Behavioral Risk Factor Surveillance System, which is another telephone survey. To obtain a CSV file, I just downloaded it from the webpage.
+
+Here is some basic information about this dataset:
+
+Variables: vaccine type, geography(state/county/region, corresponding name, and a FIPS number), season(year), month, dimension(type(age/ethnicity), metric(>6 year, e.g.)), estimated coverage, sample size, and CI.
+
+Number of records: about 185K.
+
+Problems: There are certain time periods where data is completely missing (like June 2021), and all the cells are in chr form, not numeric form. So that will bring some difficulties in data transformation step.
+
+### Demographic Datasets
+
+For demographics data, I used all three nationalwide census datasets (population, education attainment, and income) listed in the previous chapter. The cencus are all from 2021, since The latest data in the flu shot dataset is in 2021 (so that we can compare flu vaccine coverage rate with other demographics information in the same time scale). It is collected by yearly American Community Survey conducted by Census Bureau. The data is available for download right in the webpage.
+
+Here is some basic information about these datasets:
+
+Variables and number of records: 
+
+Education attainment: age groups by education attainment(for example, high school degree for people >25), race groups by education, poverty rate, median earnings, etc. This dataset is not tidy, so we are to decide which metrics are variables, about 1 observation for each state.
+
+Population: similar situation as education, this dataset is not tidy. Variables are age groups (<5, 5-9, etc.), selected age categories, statistical summaries, etc, about 1 observation for each state.
+
+Income: total population in that state, income ranges, median, mean, etc., about 1 observation for each state.
+
+Problems:
+
+All of these three datasets are in chr form, so we have to spend time on transforming these characters to numeric. Also, these datasets are in a nested column form, meaning that there are columns within a column if we view them in Excel. So we have to find a way to deal with this kind of format. Moreover, there are so many variables that we do not need, so we also need to deal with the superfluous columns.
+
+### COVID-19 Case Dataset
+For COVID-19 case data, I again downloaded it from the CDC, as documented above. The dataset starts from 2020 and ends in 2022, which overlapps the flu shots data in years 2020 and 2021, given us the opportunity to visualize some trends in COVID cases and flu shots in the same time scale. The data is collected by local reports. The dataset is availabe for downloading online.
+
+Variables: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>MISSING<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+Number of Records:
+
+Problems:
+
 ## Cleaning / transformation
 
+### Flu Vaccine Coverage Dataset
+First, we extract the year of the record from the season column, since the number after year in that column is not the month; then we combine the year with month in Month column, convert it to Date class and store it in a new column called "ym". Also, we convert column Estimate, which is estimated coverage rate, from chr to numeric. 
+
+### Demographic Datasets
+For these datasets, we transform them more or less in the same way: first, only keep columns(which contains data for each state) with estimated value for each state, and transpose the dataset so that each row contains the metrics for only one state. Then, change the row names to the exact name of that state, and convert the entries to numeric. For education, we add a column called "high_school_higher_pop" that represents the total population that counts number of people that attained at least a high school or equivalent diploma. For population, we add 3 columns, "children_pop", which counts number of people <=14, "children_ratio", ratio of children with respect to total population, "elder_ratio", ratio of people >= 65 with respect to total population. For income, we only keep the income data for households, which is the majority, and we calculate the ratio of households who earn less than 14999 USD/year (stored in household_poverty_rate) or more than 150,000 USD/year (stored in household_wealth_rate) .
+
+### demo_df, an Enhanced Dataframe
+After doing above transformations, we combine the added and some inherent columns for demographics dataset with the flu shot coverage data and forming a more concise dataframe called demo_df, and we do further feature engineering in this df. To be more specific, this new df includes the by-state information on 
+
+1)number of people who attained at least a high school or equivalent degree; 
+
+2)population over 18;
+
+3)ratio of population over 18 that received at least a high school or equivalent degree (engineered by dividing 1 by 2);
+
+4)total population;
+
+5)population under 14;
+
+6)ratio of children (<=14);
+
+7)population over 65;
+
+8)ratio of people >=65;
+
+9)median household income;
+
+10)mean household income;
+
+11)household poverty rate;
+
+12)household wealth rate.
+
+The reason for doing this is that the original datasets are too cubersome for us to work with. 
+
+### us_by_year, an Enhanced Dataframe
+This df is extract from the flu shot dataset. In this dataframe, we only keep the records for national wide flu coverage for each month, from 2009 to 2021, and only records that is related to seasonal influenza, since H1N1 vaccines are only provided in earlier years.Also, we only care about the age metric, which should be ">6" months, which will include all eligible people. Again, the reason we extract this specific dataframe is to eliminate unnecessary entries for easier plotting, while keeping the original dataframe the same in case we need gather other data from it.
+
 ## Missing value analysis
+
+Here we use redav package to visualize.
+### Flu Vaccination Data
+```{r}
+library(redav)
+flu <- read.csv("./data/raw/flu_vax_coverage.csv")
+plot_missing(flu, percent = FALSE)
+```
+From the plot, we can see that some rows are missing sample size variable (and thus missing CI), but since that variable is not taken into consideration, we are not concerned with that variable being NA; Also, very few rows are missing Estimate, which is our focus. But we do not need to worry it too much, since there are very few rows that are missing this variable. For rows with missing Estimates, we decided not to impute them, since we cannot be sure what variables it is dependent on. 
+
+Other than the missing columns shown in the graph, we are also observing that some rows are missing, such as the 2021 June data mentioned before, which is completely missing without a note. So we are very careful when dealing with the dataset: we regularly check if there is missing data in generated dataframe or abnoramlities in plot.
+
+### Demo_df
+Here we analyze the clean data demo_df instead of analyzing three separate demographics data, since 1)they are very difficult to be transformed into what we need to feed into redav; 2)The original datasets includes too many unused columns, which will make graph unreadable; 3)we did not impute any data in the transformation/cleaning stage, which means if demo_df is complete if and only if entries in the original dataset are complete.
+```{r}
+demo_df <- read.csv("./data/clean/demo_df.csv")
+plot_missing(demo_df, percent = FALSE)
+```
+As we can see from the graph, demo_df is complete. Therefore, the entries we extracted from demographics datasets are also complete.
+
+>>>>>>>>>>>>>>>>>MISSING COVID<<<<<<<<<<<<<<<<<<<<<<<<<
 
