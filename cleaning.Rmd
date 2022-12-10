@@ -1,5 +1,5 @@
 ---
-title: "5702F"
+title: "Cleaning file"
 output: html_document
 date: "2022-12-09"
 ---
@@ -18,10 +18,10 @@ library(lubridate)
 
 ```{r}
 #READ DATA
-flu<-read.csv("data/flu_vax_coverage.csv")
-education <- read.csv("data/education.csv")
-pop<- read.csv("data/population.csv")
-income<- read.csv("data/income.csv")
+flu <- read.csv("data/raw/flu_vax_coverage.csv")
+education <- read.csv("data/raw/education.csv")
+pop <- read.csv("data/raw/population.csv")
+income <- read.csv("data/raw/income.csv")
 
 demo_df <- data.frame() #This df will contain demographic data
 ```
@@ -33,6 +33,7 @@ Transform flu vaccine data by state:
 ```{r}
 #Transform flu vax data: Date data is separated into 2 columns: Season.Survey.Year contains year info (the number after year is not month!), and Month contains month info.
 #Added columns: ym: date of the observation, in yyyy-mm-01 format (day doesn't matter)
+
 flu$ym <- as.Date(paste(stringi::stri_sub(flu$`Season.Survey.Year`, to = 4),"-", flu$Month, "-1", sep = ""))
 flu$`Estimate....` <- as.numeric(flu$`Estimate....`) #NA's!
 flu
@@ -40,7 +41,7 @@ flu
 
 Transform education data by state:
 
-NOTE: THIS DATA IS FROM 2021 CENCUS, SO IT IS BETTER TO BE COMBINED WITH 2021 FLU VACCINE DATA
+NOTE: THIS DATA IS FROM 2021 CENSUS, SO IT IS BETTER TO BE COMBINED WITH 2021 FLU VACCINE DATA
 
 Added columns: high_school_higher_pop -counts total number of people who attained a degree > hight school over 18
                
@@ -148,6 +149,8 @@ We have finished building demo_df.The final result:
 Since we are missing some values for Puerto Rico, you can consider only include the first 51 rows.
 ```{r}
 demo_df<-head(demo_df,51)
+
+write.csv(demo_df, "data/clean/demo_df.csv")
 ```
 #============================================================================================================
 
@@ -164,13 +167,8 @@ us_by_year <- us_by_year%>% filter(Vaccine=="Seasonal Influenza", #H1N1 vaccines
                      Dimension.Type =="Age",
                      Dimension=="≥6 Months") %>% arrange(ym)
 
+write.csv(us_by_year, "data/clean/us_by_year.csv", row.names=FALSE)
 
-#Try plotting to see if I transformed the data correctly
-us_by_year%>%
-  # filter(Season.Survey.Year == "2009-10" | Season.Survey.Year == "2014-15" | Season.Survey.Year == "2020-21") %>%
-  ggplot() +
-    geom_line(aes(ym, Estimate....)) + 
-    facet_grid(.~Season.Survey.Year)
 ```
 
 
