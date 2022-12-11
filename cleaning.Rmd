@@ -6,9 +6,10 @@ date: "2022-12-09"
 
 ````{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
 ````
 
-## R Markdown
+## Import Libraries
 
 ```{r}
 library(dplyr)
@@ -16,40 +17,45 @@ library(tidyverse)
 library(lubridate)
 ```
 
+## Import Datasets from data folder
+
 ```{r}
 #READ DATA
 flu <- read.csv("data/raw/flu_vax_coverage.csv")
 education <- read.csv("data/raw/education.csv")
 pop <- read.csv("data/raw/population.csv")
 income <- read.csv("data/raw/income.csv")
-
-demo_df <- data.frame() #This df will contain demographic data
 ```
 
-Data Transformation:
+## Data Transformation:
 
-Transform flu vaccine data by state:
+demo_df will contain transformed/engineered demographic data
+```{r}
+demo_df <- data.frame()
+```
+
+
+### Transform flu vaccine data by state:
+
+Notice that date data is separated into 2 columns: Season.Survey.Year contains year info (the number after year is not month!), and Month contains month info. 
+
+Added columns: ym: date of the observation, in yyyy-mm-01 format (day doesn't matter)
 
 ```{r}
-#Transform flu vax data: Date data is separated into 2 columns: Season.Survey.Year contains year info (the number after year is not month!), and Month contains month info.
-#Added columns: ym: date of the observation, in yyyy-mm-01 format (day doesn't matter)
-
 flu$ym <- as.Date(paste(stringi::stri_sub(flu$`Season.Survey.Year`, to = 4),"-", flu$Month, "-1", sep = ""))
 flu$`Estimate....` <- as.numeric(flu$`Estimate....`) #NA's!
-flu
 ```
 
-Transform education data by state:
-
-NOTE: THIS DATA IS FROM 2021 CENSUS, SO IT IS BETTER TO BE COMBINED WITH 2021 FLU VACCINE DATA
+### Transform education attainment data by state:
 
 Added columns: high_school_higher_pop -counts total number of people who attained a degree > hight school over 18
+
+Columns appended to demo_df: high_school_higher_pop
                
 ```{r}
-rowname <- education$Label..Grouping.
+rowname <- education$Label..Grouping. #store the names for later use
 education <- mutate_all(education[str_detect(colnames(education),"Total..Estimate")],
-                        function(x){as.numeric(str_replace_all(x,",",""))})%>% t() %>% as.data.frame() 
-
+                        function(x){as.numeric(str_replace_all(x,",",""))})%>% t() %>% as.data.frame() #Convert all entries to numeric
 rownames(education)<- as.list(lapply(str_split(rownames(education),"\\.\\."),
                                      function(x){str_replace_all(x[1],"\\."," ")})) #Transform state names
 colnames(education)<- rowname
@@ -63,22 +69,36 @@ education$high_school_higher_pop<-  hs$high_school_higher_pop
 #store the added column in demo_df
 demo_df=education
 demo_df=demo_df[69]
-demo_df
 ```
 
-Transform Pop Data by state and combine with education data:
+### Transform pop data by state:
+
+* Added columns: 
+  + children_pop - number of people <= 14; 
+  + children_ratio - ratio of children with respect to total pop; 
+  + elder_ratio - ratio of people >= 65
+
+* Columns added to demo_df:
+  + pop_over_18
+  + high_school_education_ratio (=pop_over_18/tot pop over 18)
+  + children_pop
+  + children_ratio
+  + elder_pop
+  + elder_ratio 
+  + tot_pop: total population of that state
+
 
 ```{r}
 rowname <- pop$Label..Grouping.
 pop <- mutate_all(pop[str_detect(colnames(pop),"Total..Estimate")],
-                        function(x){as.numeric(str_replace_all(x,",",""))})%>% t() %>% as.data.frame()
+                        function(x){as.numeric(str_replace_all(x,",",""))})%>% t() %>% as.data.frame() #Convert all entries to numeric
 rownames(pop)<- as.list(lapply(str_split(rownames(pop),"\\.\\."),
                                      function(x){str_replace_all(x[1],"\\."," ")})) #Transform state names
 colnames(pop)<- rowname
 demo_df$pop_over_18<- pop$`        18 years and over`
-demo_df
 ```
-Calculate the ratios:
+
+Calculate the ratio:
 
 ```{r}
 demo_df<-demo_df %>% mutate(high_school_education_ratio=high_school_higher_pop/pop_over_18)
@@ -95,10 +115,18 @@ demo_df$children_pop <- pop$children_pop
 demo_df$children_ratio<- pop$children_ratio
 demo_df$elder_pop <- pop$`        65 years and over`
 demo_df$elder_ratio <- pop$elder_ratio
-
 ```
 
-Next, include income data for households in 2021. NOTE: US DATA IS MISSING IN THIS DATASET!
+### Transform household income data by state:
+
+Note: US data is missing in this dataset
+
+* Added columns:
+  + household_poverty_rate: ratio of households who earn less than 14,999 USD/Year
+  + household_wealth_rate: ratio of households who earn more than 150,000 USD/Year 
+* Columns added to demo_df:
+  + household_poverty_rate
+  + household_wealth_rate
 
 ```{r}
 rowname <- income$Label..Grouping.
@@ -107,7 +135,8 @@ rownames(income)<- as.list(lapply(str_split(rownames(income),"\\.\\."),
                                      function(x){str_replace_all(x[1],"\\."," ")})) #Transform state names
 colnames(income)<- rowname
 
-income$`Median income (dollars)` <- as.numeric(str_replace_all(income$`Median income (dollars)`,",",""))
+#Convert some entries to numeric
+income$`Median income (dollars)` <- as.numeric(str_replace_all(income$`Median income (dollars)`,",","")) 
 income$`Mean income (dollars)`<-as.numeric(str_replace_all(income$`Mean income (dollars)`,",",""))
 demo_df$`median_household_income` <- append(income$`Median income (dollars)`,NA)
 demo_df$`mean_household_income` <- append(income$`Mean income (dollars)`,NA)
@@ -120,9 +149,11 @@ income <- income  %>% mutate(household_poverty_rate= as.numeric(str_replace_all(
                                           as.numeric(str_replace_all(income$`    $10,000 to $14,999`,"%",""))/100,
                              household_wealth_rate=as.numeric(str_replace_all(income$`    $150,000 to $199,999`,"%",""))/100+
                                           as.numeric(str_replace_all(income$`    $200,000 or more`,"%",""))/100)
-demo_df$household_poverty_rate = append(income$household_poverty_rate,NA)
+demo_df$household_poverty_rate = append(income$household_poverty_rate,NA) #append NA to US data
 demo_df$household_wealth_rate = append(income$household_wealth_rate,NA)
 ```
+
+### Final changes to demo_df: merge with flu coverage data
 
 Finally, we append flu shot coverage data by state to demo_df:
 
@@ -144,7 +175,9 @@ shot_by_state <- shot_by_state %>% filter(Vaccine=="Seasonal Influenza", #H1N1 v
 
 demo_df$flu_shot_coverage_2021 <- append(shot_by_state$`Mean Vaccine Coverage in 2021 (Percentage)`,c(NA,NA))
 ```
-#============================================================================================================
+
+### Output clean demo_df:
+
 We have finished building demo_df.The final result:
 Since we are missing some values for Puerto Rico, you can consider only include the first 51 rows.
 ```{r}
@@ -153,10 +186,12 @@ demo_df <- tibble::rownames_to_column(demo_df, "state")
 
 write.csv(demo_df, "data/clean/demo_df.csv")
 ```
-#============================================================================================================
 
 
-US FLU COVERAGE DATA BY YEAR(FOR TIME SERIES)
+
+### US flu coverage Data by year(FOR TIME SERIES)
+
+aggregate all records that is focusing on the whole US.
 
 ```{r}
 
