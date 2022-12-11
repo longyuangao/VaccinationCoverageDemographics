@@ -81,6 +81,40 @@
 				y.domain([0, d3.max(data, d => +d[selectedVar])]);
 				yAxis.transition().duration(1000).call(d3.axisLeft(y));
 
+
+				// ----------------
+				// Create a tooltip
+				// ----------------
+				const tooltip = d3.select("#my_dataviz")
+					.append("div")
+					.style("opacity", 0)
+					.attr("class", "tooltip")
+					.style("background-color", "white")
+					.style("border", "solid")
+					.style("border-width", "1px")
+					.style("border-radius", "5px")
+					.style("padding", "10px")
+
+				// Three function that change the tooltip when user hover / move / leave a cell
+				const mouseover = function (event, d) {
+					const Name = d3.select(this.parentNode).datum().key;
+					const Value = d.data[selectedVar];
+					tooltip
+						.html("subgroup: " + Name + "<br>" + "Value: " + Value)
+						.style("opacity", 1)
+
+				}
+				const mousemove = function (event, d) {
+					tooltip.style("transform", "translateY(-55%)")
+						.style("left", (event.x) / 2 + "px")
+						.style("top", (event.y) / 2 - 30 + "px")
+				}
+				const mouseleave = function (event, d) {
+					tooltip
+						.style("opacity", 0)
+				}
+
+
 				// variable u: map data to existing bars
 				const u = svg.selectAll("rect")
 					.data(data)
@@ -94,6 +128,9 @@
 					.attr("width", x.bandwidth())
 					.attr("height", d => height - y(d[selectedVar]))
 					.attr("fill", "#69b3a2")
+					.on("mouseover", mouseover)
+					.on("mousemove", mousemove)
+					.on("mouseleave", mouseleave)
 			})
 
 		}
