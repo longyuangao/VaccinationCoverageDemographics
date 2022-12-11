@@ -40,7 +40,7 @@ Number of Records:
 
 Problems:
 
-## Cleaning / transformation
+## Data Cleaning and Transformation
 
 ### Flu Vaccine Coverage Dataset
 First, we extract the year of the record from the season column, since the number after year in that column is not the month; then we combine the year with month in Month column, convert it to Date class and store it in a new column called "ym". Also, we convert column Estimate, which is estimated coverage rate, from chr to numeric. 
@@ -51,29 +51,18 @@ For these datasets, we transform them more or less in the same way: first, only 
 ### demo_df, an Enhanced Dataframe
 After doing above transformations, we combine the added and some inherent columns for demographics dataset with the flu shot coverage data and forming a more concise dataframe called demo_df, and we do further feature engineering in this df. To be more specific, this new df includes the by-state information on 
 
-1)number of people who attained at least a high school or equivalent degree; 
-
-2)population over 18;
-
-3)ratio of population over 18 that received at least a high school or equivalent degree (engineered by dividing 1 by 2);
-
-4)total population;
-
-5)population under 14;
-
-6)ratio of children (<=14);
-
-7)population over 65;
-
-8)ratio of people >=65;
-
-9)median household income;
-
-10)mean household income;
-
-11)household poverty rate;
-
-12)household wealth rate.
++ number of people who attained at least a high school or equivalent degree; 
++ population over 18;
++ ratio of population over 18 that received at least a high school or equivalent degree (engineered by dividing 1 by 2);
++ total population;
++ population under 14;
++ ratio of children (<=14);
++ population over 65;
++ ratio of people >=65;
++ median household income;
++ mean household income;
++ household poverty rate;
++ household wealth rate.
 
 The reason for doing this is that the original datasets are too cubersome for us to work with. 
 
@@ -82,24 +71,69 @@ This df is extract from the flu shot dataset. In this dataframe, we only keep th
 
 ## Missing value analysis
 
-Here we use redav package to visualize.
+Here we use naniar package to visualize.
 ### Flu Vaccination Data
 ```{r}
 library(redav)
+library(tidyverse)
+library(naniar)
 flu <- read.csv("./data/raw/flu_vax_coverage.csv")
-plot_missing(flu, percent = FALSE)
+flu[c(4,6,9,11)] <-flu[c(4,6,9,11)] %>% 
+  mutate_all(function(x){as.numeric(gsub("\\D+","",x))})
+gg_miss_upset(flu, nsets = 100)
 ```
-From the plot, we can see that some rows are missing sample size variable (and thus missing CI), but since that variable is not taken into consideration, we are not concerned with that variable being NA; Also, very few rows are missing Estimate, which is our focus. But we do not need to worry it too much, since there are very few rows that are missing this variable. For rows with missing Estimates, we decided not to impute them, since we cannot be sure what variables it is dependent on. 
+
+From the plot, we can see that some rows are missing sample size variable, but since that variable is not taken into consideration, we are not concerned with that variable being NA; Also, some rows are missing Estimate, which is our focus. For rows with missing Estimates, we decided not to impute them, since we cannot be sure what variables it is dependent on. Some rows are also missing estimates and sample sizes together (may be because that record is completely missing).
 
 Other than the missing columns shown in the graph, we are also observing that some rows are missing, such as the 2021 June data mentioned before, which is completely missing without a note. So we are very careful when dealing with the dataset: we regularly check if there is missing data in generated dataframe or abnoramlities in plot.
 
-### Demo_df
-Here we analyze the clean data demo_df instead of analyzing three separate demographics data, since 1)they are very difficult to be transformed into what we need to feed into redav; 2)The original datasets includes too many unused columns, which will make graph unreadable; 3)we did not impute any data in the transformation/cleaning stage, which means if demo_df is complete if and only if entries in the original dataset are complete.
+### Demographic datasets
+
+#### Population dataset
+
+Since visualizations for the whole dataset is unhelpful and somewhat meaningless (since there are just so many columns, and some columns are intended to be na), we only visualize the missing values on the subsets of the datasets which are used in our data analysis.
 ```{r}
-demo_df <- read.csv("./data/clean/demo_df.csv")
-plot_missing(demo_df, percent = FALSE)
+pop <- read.csv("./data/raw/population.csv")
+rowname = pop$Label..Grouping
+pop<-pop[str_detect(colnames(pop),"Total..Estimate")] %>% 
+  t() %>% 
+  as.data.frame() %>%
+  mutate_all(function(x){as.numeric(gsub("\\D+","",x))})
+pop <- pop[c(1,3:5,32)]
+plot_missing(pop)
 ```
-As we can see from the graph, demo_df is complete. Therefore, the entries we extracted from demographics datasets are also complete.
+There are no missing values in our used subsets of population dataset.
 
->>>>>>>>>>>>>>>>>MISSING COVID<<<<<<<<<<<<<<<<<<<<<<<<<
+#### Education attaiment dataset
+```{r}
+education <- read.csv("./data/raw/education.csv")
+rowname = education$Label..Grouping
+education<-education[str_detect(colnames(education),"Total..Estimate")] %>% 
+  t() %>% 
+  as.data.frame() %>%
+  mutate_all(function(x){as.numeric(gsub("\\D+","",x))})
+plot_missing(education[c(2:28)])
+```
 
+There are no missing values in our used subsets of education dataset.
+
+#### Household income dataset
+```{r}
+income <- read.csv("./data/raw/income.csv")
+rowname <- income$Label..Grouping.
+income <- income[str_detect(colnames(income),"Households..Estimate")] %>% 
+  t() %>% 
+  as.data.frame()%>%
+  mutate_all(function(x){as.numeric(gsub("\\D+","",x))})
+plot_missing(income[c(1:13)])
+```
+
+There are no missing values in our used subsets of household income dataset. Note here that the data for nationalwide data is missing, but that doesn't matter to our analysis, since we will truncate all nationalwide data.
+
+#### COVID-19 cases dataset
+```{r}
+covid <- read.csv("./data/raw/United_States_COVID-19_Cases.csv")
+gg_miss_upset(covid[3:12],nset=10)
+```
+
+We can observe that the most missing pattern is (conf_cases(confirmed cases), prob_cases (total probable cases), conf_death (confirmed deaths), prob_death), this can be caused by missing all reports for a certain day. The second most frequent missing pattern is (conf_death and prob_death), which both focus on the death count; the third most missing pattern is (conf_cases and prob_cases), which is a similar situation as the second pattern; there are also about 3400 rows that missing all confirmed and probable case and death  counts. Other than these observable patterns, there are few rows that have their own specific missing patterns, which may be caused by record glitches.
