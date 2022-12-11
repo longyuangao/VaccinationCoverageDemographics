@@ -42,10 +42,13 @@ Problems:
 
 ## Data Cleaning and Transformation
 
+
 ### Flu Vaccine Coverage Dataset
+
 First, we extract the year of the record from the season column, since the number after year in that column is not the month; then we combine the year with month in Month column, convert it to Date class and store it in a new column called "ym". Also, we convert column Estimate, which is estimated coverage rate, from chr to numeric. 
 
 ### Demographic Datasets
+
 For these datasets, we transform them more or less in the same way: first, only keep columns(which contains data for each state) with estimated value for each state, and transpose the dataset so that each row contains the metrics for only one state. Then, change the row names to the exact name of that state, and convert the entries to numeric. For education, we add a column called "high_school_higher_pop" that represents the total population that counts number of people that attained at least a high school or equivalent diploma. For population, we add 3 columns, "children_pop", which counts number of people <=14, "children_ratio", ratio of children with respect to total population, "elder_ratio", ratio of people >= 65 with respect to total population. For income, we only keep the income data for households, which is the majority, and we calculate the ratio of households who earn less than 14999 USD/year (stored in household_poverty_rate) or more than 150,000 USD/year (stored in household_wealth_rate) .
 
 ### demo_df, an Enhanced Dataframe
@@ -133,7 +136,7 @@ plot_missing(income[c(1:13)])
 
 There are no missing values in our used subsets of household income dataset. Note here that the data for nationalwide data is missing, but that doesn't matter to our analysis, since we will truncate all nationalwide data.
 
-#### COVID-19 cases dataset
+### COVID-19 cases dataset
 
 ```{r}
 covid <- read.csv("./data/raw/United_States_COVID-19_Cases.csv")
