@@ -149,6 +149,7 @@ We have finished building demo_df.The final result:
 Since we are missing some values for Puerto Rico, you can consider only include the first 51 rows.
 ```{r}
 demo_df<-head(demo_df,51)
+demo_df <- tibble::rownames_to_column(demo_df, "state")
 
 write.csv(demo_df, "data/clean/demo_df.csv")
 ```
