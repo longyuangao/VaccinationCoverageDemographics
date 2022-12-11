@@ -5,7 +5,6 @@
 	<meta charset="utf-8">
 	<title>D3 Component - Interactive Choropleth</title>
 	<script src="https://d3js.org/d3.v7.js"></script>
-	<script src="//d3js.org/topojson.v3.min.js"></script>
 
 	<!-- <style type="text/css">
 		h1 {
@@ -34,14 +33,126 @@
 		<line x1="250" y1="150" x2="300" y2="200" stroke="red" stroke-width="5"></line>
 	</svg> -->
 
-	<h1>D3 Component - Interactive Choropleth</h1>
+	<h1>D3 Component</h1>
 
-	<svg id="map" width="400" height="300"></svg>
+	<div id="my_dataviz"></div>
 
 	<script>
-		d3.csv("data/clean/demo_df.csv", function (data) {
-			console.log(data);
-		});
+
+
+		// set the dimensions and margins of the graph
+		const margin = { top: 30, right: 10, bottom: 10, left: 0 },
+			width = 1000 - margin.left - margin.right,
+			height = 400 - margin.top - margin.bottom;
+
+		// append the svg object to the body of the page
+		const svg = d3.select("#my_dataviz")
+			.append("svg")
+			.attr("width", width + margin.left + margin.right)
+			.attr("height", height + margin.top + margin.bottom)
+			.append("g")
+			.attr("transform",
+				`translate(${margin.left},${margin.top})`);
+
+		// Parse the Data
+		d3.csv("data/clean/demo_df.csv").then(function (data) {
+			console.log(data)
+			// Extract the list of dimensions we want to keep in the plot. Here I keep all except the column called Species
+			dimensions = Object.keys(data[0]).filter(function (d) {
+				if (d == "tot_pop" || d == "flu_shot_coverage_2021" || d == "high_school_education_ratio" || d == "household_poverty_rate" ||
+					d == "median_household_income") {
+					return d;
+				}
+			})
+
+			// For each dimension, I build a linear scale. I store all in a y object
+			const y = {}
+			for (i in dimensions) {
+				name = dimensions[i]
+				y[name] = d3.scaleLinear()
+					.domain(d3.extent(data, function (d) { return +d[name]; }))
+					.range([height, 0])
+			}
+
+			// Build the X scale -> it find the best position for each Y axis
+			x = d3.scalePoint()
+				.range([0, width])
+				.padding(1)
+				.domain(dimensions);
+
+			// The path function take a row of the csv as input, and return x and y coordinates of the line to draw for this raw.
+			function path(d) {
+				return d3.line()(dimensions.map(function (p) { return [x(p), y[p](d[p])]; }));
+			}
+
+			// Draw the lines
+			svg
+				.selectAll("myPath")
+				.data(data)
+				.join("path")
+				.attr("d", path)
+				.style("fill", "none")
+				.style("stroke", "#69b3a2")
+				.style("opacity", 0.5)
+
+
+			// create a tooltip
+			var Tooltip = d3.select("#my_dataviz")
+				.append("div")
+				.style("opacity", 0)
+				.attr("class", "tooltip")
+				.style("background-color", "white")
+				.style("border", "solid")
+				.style("border-width", "2px")
+				.style("border-radius", "5px")
+				.style("padding", "5px")
+
+			// Three function that change the tooltip when user hover / move / leave a cell
+			var mouseover = function (d) {
+				Tooltip
+					.style("opacity", 1)
+				d3.select(this)
+					.style("stroke", "black")
+					.style("opacity", 1)
+			}
+			var mousemove = function (d) {
+				Tooltip
+					.html("The exact value of<br>this cell is: " + d.value)
+					.style("left", (d3.pointer(this)[0] + 70) + "px")
+					.style("top", (d3.pointer(this)[1]) + "px")
+			}
+			var mouseleave = function (d) {
+				Tooltip
+					.style("opacity", 0)
+				d3.select(this)
+					.style("stroke", "none")
+					.style("opacity", 0.8)
+			}
+
+			// Draw the axis:
+			svg.selectAll("myAxis")
+				// For each dimension of the dataset I add a 'g' element:
+				.data(dimensions).enter()
+				.append("g")
+				// I translate this element to its right position on the x axis
+				.attr("transform", function (d) { return "translate(" + x(d) + ")"; })
+				// And I build the axis with the call function
+				.each(function (d) { d3.select(this).call(d3.axisLeft().scale(y[d])); })
+				// Add axis title
+				.append("text")
+				.style("text-anchor", "middle")
+				.attr("y", -9)
+				.text(function (d) { return d; })
+				.style("fill", "black")
+				.on("mouseover", mouseover)
+				.on("mousemove", mousemove)
+				.on("mouseleave", mouseleave)
+
+
+
+		})
+
+
 	</script>
 
 </body>
