@@ -23,7 +23,7 @@
 <meta name="author" content="Ethan Evans, Longyuan Gao, Jianxun Guo" />
 
 
-<meta name="date" content="2022-11-01" />
+<meta name="date" content="2022-12-13" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -80,9 +80,25 @@
 </ul></li>
 <li class="chapter" data-level="3" data-path="data.html"><a href="data.html"><i class="fa fa-check"></i><b>3</b> Data</a>
 <ul>
-<li class="chapter" data-level="3.1" data-path="data.html"><a href="data.html#sources"><i class="fa fa-check"></i><b>3.1</b> Sources</a></li>
-<li class="chapter" data-level="3.2" data-path="data.html"><a href="data.html#cleaning-transformation"><i class="fa fa-check"></i><b>3.2</b> Cleaning / transformation</a></li>
-<li class="chapter" data-level="3.3" data-path="data.html"><a href="data.html#missing-value-analysis"><i class="fa fa-check"></i><b>3.3</b> Missing value analysis</a></li>
+<li class="chapter" data-level="3.1" data-path="data.html"><a href="data.html#sources"><i class="fa fa-check"></i><b>3.1</b> Sources</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="data.html"><a href="data.html#flu-vaccine-coverage-dataset"><i class="fa fa-check"></i><b>3.1.1</b> Flu Vaccine Coverage Dataset</a></li>
+<li class="chapter" data-level="3.1.2" data-path="data.html"><a href="data.html#demographic-datasets"><i class="fa fa-check"></i><b>3.1.2</b> Demographic Datasets</a></li>
+<li class="chapter" data-level="3.1.3" data-path="data.html"><a href="data.html#covid-19-case-dataset"><i class="fa fa-check"></i><b>3.1.3</b> COVID-19 Case Dataset</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="data.html"><a href="data.html#data-cleaning-and-transformation"><i class="fa fa-check"></i><b>3.2</b> Data Cleaning and Transformation</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="data.html"><a href="data.html#flu-vaccine-coverage-dataset-1"><i class="fa fa-check"></i><b>3.2.1</b> Flu Vaccine Coverage Dataset</a></li>
+<li class="chapter" data-level="3.2.2" data-path="data.html"><a href="data.html#demographic-datasets-1"><i class="fa fa-check"></i><b>3.2.2</b> Demographic Datasets</a></li>
+<li class="chapter" data-level="3.2.3" data-path="data.html"><a href="data.html#demo_df-an-enhanced-dataframe"><i class="fa fa-check"></i><b>3.2.3</b> demo_df, an Enhanced Dataframe</a></li>
+<li class="chapter" data-level="3.2.4" data-path="data.html"><a href="data.html#us_by_year-an-enhanced-dataframe"><i class="fa fa-check"></i><b>3.2.4</b> us_by_year, an Enhanced Dataframe</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="data.html"><a href="data.html#missing-value-analysis"><i class="fa fa-check"></i><b>3.3</b> Missing value analysis</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="data.html"><a href="data.html#flu-vaccination-data"><i class="fa fa-check"></i><b>3.3.1</b> Flu Vaccination Data</a></li>
+<li class="chapter" data-level="3.3.2" data-path="data.html"><a href="data.html#demographic-datasets-2"><i class="fa fa-check"></i><b>3.3.2</b> Demographic datasets</a></li>
+<li class="chapter" data-level="3.3.3" data-path="data.html"><a href="data.html#covid-19-cases-dataset"><i class="fa fa-check"></i><b>3.3.3</b> COVID-19 cases dataset</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="results.html"><a href="results.html"><i class="fa fa-check"></i><b>4</b> Results</a></li>
 <li class="chapter" data-level="5" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>5</b> Interactive component</a></li>
@@ -110,13 +126,101 @@
 <h1><span class="header-section-number">Chapter 3</span> Data<a href="data.html#data" class="anchor-section" aria-label="Anchor link to header"></a></h1>
 <div id="sources" class="section level2 hasAnchor" number="3.1">
 <h2><span class="header-section-number">3.1</span> Sources<a href="data.html#sources" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="flu-vaccine-coverage-dataset" class="section level3 hasAnchor" number="3.1.1">
+<h3><span class="header-section-number">3.1.1</span> Flu Vaccine Coverage Dataset<a href="data.html#flu-vaccine-coverage-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Longyuan Gao is reponsible for collecting the data. The influenza vaccine coverage data is collected from CDC, which is stated in the previous chapter. The dataset is comprehensive in the sense that it records the coverage rate for every state and regions in the United States. Although there is some missing data (like the 2021 June coverage data), the overall quality is adequate enough for us to conduct visualizations. The data is collected from the National Immunization Survey-Flu (NIS-Flu), a national wide survey on vaccination coverage conducted by phone, and the Behavioral Risk Factor Surveillance System, which is another telephone survey. To obtain a CSV file, I just downloaded it from the webpage.</p>
+<p>Here is some basic information about this dataset:</p>
+<p>Variables: vaccine type, geography(state/county/region, corresponding name, and a FIPS number), season(year), month, dimension(type(age/ethnicity), metric(&gt;6 year, e.g.)), estimated coverage, sample size, and CI.</p>
+<p>Number of records: about 185K.</p>
+<p>Problems: There are certain time periods where data is completely missing (like June 2021), and all the cells are in chr form, not numeric form. So that will bring some difficulties in data transformation step.</p>
 </div>
-<div id="cleaning-transformation" class="section level2 hasAnchor" number="3.2">
-<h2><span class="header-section-number">3.2</span> Cleaning / transformation<a href="data.html#cleaning-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="demographic-datasets" class="section level3 hasAnchor" number="3.1.2">
+<h3><span class="header-section-number">3.1.2</span> Demographic Datasets<a href="data.html#demographic-datasets" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For demographics data, I used all three nationalwide census datasets (population, education attainment, and income) listed in the previous chapter. The cencus are all from 2021, since The latest data in the flu shot dataset is in 2021 (so that we can compare flu vaccine coverage rate with other demographics information in the same time scale). It is collected by yearly American Community Survey conducted by Census Bureau. The data is available for download right in the webpage.</p>
+<p>Here is some basic information about these datasets:</p>
+<p>Variables and number of records:</p>
+<p>Education attainment: age groups by education attainment(for example, high school degree for people &gt;25), race groups by education, poverty rate, median earnings, etc. This dataset is not tidy, so we are to decide which metrics are variables, about 1 observation for each state.</p>
+<p>Population: similar situation as education, this dataset is not tidy. Variables are age groups (&lt;5, 5-9, etc.), selected age categories, statistical summaries, etc, about 1 observation for each state.</p>
+<p>Income: total population in that state, income ranges, median, mean, etc., about 1 observation for each state.</p>
+<p>Problems:</p>
+<p>All of these three datasets are in chr form, so we have to spend time on transforming these characters to numeric. Also, these datasets are in a nested column form, meaning that there are columns within a column if we view them in Excel. So we have to find a way to deal with this kind of format. Moreover, there are so many variables that we do not need, so we also need to deal with the superfluous columns.</p>
+</div>
+<div id="covid-19-case-dataset" class="section level3 hasAnchor" number="3.1.3">
+<h3><span class="header-section-number">3.1.3</span> COVID-19 Case Dataset<a href="data.html#covid-19-case-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For COVID-19 case data, I again downloaded it from the CDC, as documented above. The dataset starts from 2020 and ends in 2022, which overlapps the flu shots data in years 2020 and 2021, given us the opportunity to visualize some trends in COVID cases and flu shots in the same time scale. The data is collected by local reports. The dataset is availabe for downloading online.</p>
+<p>Variables: &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;MISSING&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</p>
+<p>Number of Records:</p>
+<p>Problems:</p>
+</div>
+</div>
+<div id="data-cleaning-and-transformation" class="section level2 hasAnchor" number="3.2">
+<h2><span class="header-section-number">3.2</span> Data Cleaning and Transformation<a href="data.html#data-cleaning-and-transformation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="flu-vaccine-coverage-dataset-1" class="section level3 hasAnchor" number="3.2.1">
+<h3><span class="header-section-number">3.2.1</span> Flu Vaccine Coverage Dataset<a href="data.html#flu-vaccine-coverage-dataset-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>First, we extract the year of the record from the season column, since the number after year in that column is not the month; then we combine the year with month in Month column, convert it to Date class and store it in a new column called “ym”. Also, we convert column Estimate, which is estimated coverage rate, from chr to numeric.</p>
+</div>
+<div id="demographic-datasets-1" class="section level3 hasAnchor" number="3.2.2">
+<h3><span class="header-section-number">3.2.2</span> Demographic Datasets<a href="data.html#demographic-datasets-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>For these datasets, we transform them more or less in the same way: first, only keep columns(which contains data for each state) with estimated value for each state, and transpose the dataset so that each row contains the metrics for only one state. Then, change the row names to the exact name of that state, and convert the entries to numeric. For education, we add a column called “high_school_higher_pop” that represents the total population that counts number of people that attained at least a high school or equivalent diploma. For population, we add 3 columns, “children_pop”, which counts number of people &lt;=14, “children_ratio”, ratio of children with respect to total population, “elder_ratio”, ratio of people &gt;= 65 with respect to total population. For income, we only keep the income data for households, which is the majority, and we calculate the ratio of households who earn less than 14999 USD/year (stored in household_poverty_rate) or more than 150,000 USD/year (stored in household_wealth_rate) .</p>
+</div>
+<div id="demo_df-an-enhanced-dataframe" class="section level3 hasAnchor" number="3.2.3">
+<h3><span class="header-section-number">3.2.3</span> demo_df, an Enhanced Dataframe<a href="data.html#demo_df-an-enhanced-dataframe" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>After doing above transformations, we combine the added and some inherent columns for demographics dataset with the flu shot coverage data and forming a more concise dataframe called demo_df, and we do further feature engineering in this df. To be more specific, this new df includes the by-state information on</p>
+<ul>
+<li>number of people who attained at least a high school or equivalent degree;</li>
+<li>population over 18;</li>
+<li>ratio of population over 18 that received at least a high school or equivalent degree (engineered by dividing 1 by 2);</li>
+<li>total population;</li>
+<li>population under 14;</li>
+<li>ratio of children (&lt;=14);</li>
+<li>population over 65;</li>
+<li>ratio of people &gt;=65;</li>
+<li>median household income;</li>
+<li>mean household income;</li>
+<li>household poverty rate;</li>
+<li>household wealth rate.</li>
+</ul>
+<p>The reason for doing this is that the original datasets are too cubersome for us to work with.</p>
+</div>
+<div id="us_by_year-an-enhanced-dataframe" class="section level3 hasAnchor" number="3.2.4">
+<h3><span class="header-section-number">3.2.4</span> us_by_year, an Enhanced Dataframe<a href="data.html#us_by_year-an-enhanced-dataframe" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>This df is extract from the flu shot dataset. In this dataframe, we only keep the records for national wide flu coverage for each month, from 2009 to 2021, and only records that is related to seasonal influenza, since H1N1 vaccines are only provided in earlier years.Also, we only care about the age metric, which should be “&gt;6” months, which will include all eligible people. Again, the reason we extract this specific dataframe is to eliminate unnecessary entries for easier plotting, while keeping the original dataframe the same in case we need gather other data from it.</p>
+</div>
 </div>
 <div id="missing-value-analysis" class="section level2 hasAnchor" number="3.3">
 <h2><span class="header-section-number">3.3</span> Missing value analysis<a href="data.html#missing-value-analysis" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Here we use naniar package to visualize.</p>
+<div id="flu-vaccination-data" class="section level3 hasAnchor" number="3.3.1">
+<h3><span class="header-section-number">3.3.1</span> Flu Vaccination Data<a href="data.html#flu-vaccination-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>From the plot, we can see that some rows are missing sample size variable, but since that variable is not taken into consideration, we are not concerned with that variable being NA; Also, some rows are missing Estimate, which is our focus. For rows with missing Estimates, we decided not to impute them, since we cannot be sure what variables it is dependent on. Some rows are also missing estimates and sample sizes together (may be because that record is completely missing).</p>
+<p>Other than the missing columns shown in the graph, we are also observing that some rows are missing, such as the 2021 June data mentioned before, which is completely missing without a note. So we are very careful when dealing with the dataset: we regularly check if there is missing data in generated dataframe or abnoramlities in plot.</p>
+</div>
+<div id="demographic-datasets-2" class="section level3 hasAnchor" number="3.3.2">
+<h3><span class="header-section-number">3.3.2</span> Demographic datasets<a href="data.html#demographic-datasets-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<div id="population-dataset" class="section level4 hasAnchor" number="3.3.2.1">
+<h4><span class="header-section-number">3.3.2.1</span> Population dataset<a href="data.html#population-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Since visualizations for the whole dataset is unhelpful and somewhat meaningless (since there are just so many columns, and some columns are intended to be na), we only visualize the missing values on the subsets of the datasets which are used in our data analysis.
+<img src="finalproj_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+There are no missing values in our used subsets of population dataset.</p>
+</div>
+<div id="education-attaiment-dataset" class="section level4 hasAnchor" number="3.3.2.2">
+<h4><span class="header-section-number">3.3.2.2</span> Education attaiment dataset<a href="data.html#education-attaiment-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>There are no missing values in our used subsets of education dataset.</p>
+</div>
+<div id="household-income-dataset" class="section level4 hasAnchor" number="3.3.2.3">
+<h4><span class="header-section-number">3.3.2.3</span> Household income dataset<a href="data.html#household-income-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>There are no missing values in our used subsets of household income dataset. Note here that the data for nationalwide data is missing, but that doesn’t matter to our analysis, since we will truncate all nationalwide data.</p>
+</div>
+</div>
+<div id="covid-19-cases-dataset" class="section level3 hasAnchor" number="3.3.3">
+<h3><span class="header-section-number">3.3.3</span> COVID-19 cases dataset<a href="data.html#covid-19-cases-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>We can observe that the most missing pattern is (conf_cases(confirmed cases), prob_cases (total probable cases), conf_death (confirmed deaths), prob_death), this can be caused by missing all reports for a certain day. The second most frequent missing pattern is (conf_death and prob_death), which both focus on the death count; the third most missing pattern is (conf_cases and prob_cases), which is a similar situation as the second pattern; there are also about 3400 rows that missing all confirmed and probable case and death counts. Other than these observable patterns, there are few rows that have their own specific missing patterns, which may be caused by record glitches.</p>
 
+</div>
 </div>
 </div>
             </section>
