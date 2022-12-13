@@ -7,7 +7,7 @@ output: html_notebook
 # read in clean data
 
 demo_df <- read.csv("data/clean/demo_df.csv")
-demo_df <- demo_df %>% rename(state = X)
+# demo_df <- demo_df %>% rename(state = X)
 
 us_by_year <- read.csv("data/clean/us_by_year.csv")
 
