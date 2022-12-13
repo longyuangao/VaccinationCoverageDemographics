@@ -192,7 +192,7 @@
 <p>Here we use naniar package to visualize.</p>
 <div id="flu-vaccination-data" class="section level3 hasAnchor" number="3.3.1">
 <h3><span class="header-section-number">3.3.1</span> Flu Vaccination Data<a href="data.html#flu-vaccination-data" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 <p>From the plot, we can see that some rows are missing sample size variable, but since that variable is not taken into consideration, we are not concerned with that variable being NA; Also, some rows are missing Estimate, which is our focus. For rows with missing Estimates, we decided not to impute them, since we cannot be sure what variables it is dependent on. Some rows are also missing estimates and sample sizes together (may be because that record is completely missing).</p>
 <p>Other than the missing columns shown in the graph, we are also observing that some rows are missing, such as the 2021 June data mentioned before, which is completely missing without a note. So we are very careful when dealing with the dataset: we regularly check if there is missing data in generated dataframe or abnoramlities in plot.</p>
 </div>
@@ -201,23 +201,23 @@
 <div id="population-dataset" class="section level4 hasAnchor" number="3.3.2.1">
 <h4><span class="header-section-number">3.3.2.1</span> Population dataset<a href="data.html#population-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h4>
 <p>Since visualizations for the whole dataset is unhelpful and somewhat meaningless (since there are just so many columns, and some columns are intended to be na), we only visualize the missing values on the subsets of the datasets which are used in our data analysis.
-<img src="finalproj_files/figure-html/unnamed-chunk-4-1.png" width="672" />
+<img src="finalproj_files/figure-html/unnamed-chunk-5-1.png" width="672" />
 There are no missing values in our used subsets of population dataset.</p>
 </div>
 <div id="education-attaiment-dataset" class="section level4 hasAnchor" number="3.3.2.2">
 <h4><span class="header-section-number">3.3.2.2</span> Education attaiment dataset<a href="data.html#education-attaiment-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>There are no missing values in our used subsets of education dataset.</p>
 </div>
 <div id="household-income-dataset" class="section level4 hasAnchor" number="3.3.2.3">
 <h4><span class="header-section-number">3.3.2.3</span> Household income dataset<a href="data.html#household-income-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h4>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>There are no missing values in our used subsets of household income dataset. Note here that the data for nationalwide data is missing, but that doesn’t matter to our analysis, since we will truncate all nationalwide data.</p>
 </div>
 </div>
 <div id="covid-19-cases-dataset" class="section level3 hasAnchor" number="3.3.3">
 <h3><span class="header-section-number">3.3.3</span> COVID-19 cases dataset<a href="data.html#covid-19-cases-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h3>
-<p><img src="finalproj_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p><img src="finalproj_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>We can observe that the most missing pattern is (conf_cases(confirmed cases), prob_cases (total probable cases), conf_death (confirmed deaths), prob_death), this can be caused by missing all reports for a certain day. The second most frequent missing pattern is (conf_death and prob_death), which both focus on the death count; the third most missing pattern is (conf_cases and prob_cases), which is a similar situation as the second pattern; there are also about 3400 rows that missing all confirmed and probable case and death counts. Other than these observable patterns, there are few rows that have their own specific missing patterns, which may be caused by record glitches.</p>
 
 </div>
