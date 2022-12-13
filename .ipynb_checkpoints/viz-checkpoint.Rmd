@@ -1,0 +1,52 @@
+---
+title: "Visualization File"
+output: html_notebook
+---
+
+```{r}
+# read in clean data
+
+demo_df <- read.csv("data/clean/demo_df.csv")
+# demo_df <- demo_df %>% rename(state = X)
+
+us_by_year <- read.csv("data/clean/us_by_year.csv")
+
+```
+
+```{r}
+# plots!
+
+us_by_year %>%
+  # filter(Season.Survey.Year == "2009-10") %>%
+  ggplot(aes(ym, Estimate....)) +
+    geom_line(group = 1) + 
+    facet_grid(.~Season.Survey.Year)
+
+
+```
+
+```{r}
+
+demo_df %>%
+  ggplot(aes(x = state, y = flu_shot_coverage_2021)) +
+  geom_col()
+    # facet_grid(.~Season.Survey.Year)
+
+
+```
+
+
+```{r}
+
+
+rownames(demo_df) <- demo_df[,1]
+demo_df[,1] <- NULL
+demo_df_biplot <-
+  demo_df %>%
+    select(c(tot_pop, mean_household_income, flu_shot_coverage_2021))
+results <- princomp(demo_df_biplot)
+
+#create biplot to visualize results of PCA
+biplot(results)
+
+```
