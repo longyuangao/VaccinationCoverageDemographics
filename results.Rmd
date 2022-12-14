@@ -140,7 +140,7 @@ library(redav)
 
 demo_df_biplot <-
   demo_df %>%
-    select(c(state, household_poverty_rate, flu_shot_coverage_2021, median_household_income, high_school_education_ratio, elder_ratio, children_ratio)) %>%
+    select(c(state, household_poverty_rate, flu_shot_coverage_2021, household_wealth_rate, median_household_income, high_school_education_ratio, elder_ratio, children_ratio)) %>%
     mutate(across(where(is.numeric), ~round((.x-mean(.x))/sd(.x), 2)))
 
 pca <- prcomp(demo_df_biplot[,2:4], scale. = TRUE)
@@ -180,9 +180,13 @@ new_cases <- summarize(covid_time2, sum(new_case))
 new_cases <- rename(new_cases, new_covid_case='sum(new_case)')
 new_cases$submission_date <- as.Date(new_cases$submission_date, format = "%m/%d/%Y")
 new_cases <- arrange(new_cases,submission_date)
+
+library(scales)
+
 g<-ggplot(new_cases, aes(submission_date, new_covid_case)) + 
   geom_smooth(method = "loess", span = .05, se = FALSE)+
   scale_x_date(limits = c(as.Date("2019-01-01"),as.Date("2021-12-01")))+
+  scale_y_continuous(labels = scales::label_number_si())+
   labs(y="Count", title="Nationalwide New Covid Cases")
   
 coverage_rate <- rename(us_by_year, estimation='Estimate....',record_date='ym')
