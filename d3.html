@@ -5,24 +5,22 @@
 	<meta charset="utf-8">
 	<title>D3 Component - Interactive Choropleth</title>
 	<script src="https://d3js.org/d3.v7.js"></script>
-
 </head>
 
 <body>
-
 	<h1>D3 Component - Interactive Scatterplot</h1>
-
-	<div id="my_dataviz"></div>
+	<p>Instructions: Hover over a point to highlight its regional group. Click a point to display the state it
+		represents. Refresh the page to clear all state labels.</p>
+	<div id="scatterplot"></div>
 
 	<script>
-
 		// set the dimensions and margins of the graph
 		const margin = { top: 30, right: 30, bottom: 100, left: 60 },
 			width = 560 - margin.left - margin.right,
 			height = 500 - margin.top - margin.bottom;
 
-		// append the svg object to the body of the page
-		const svg = d3.select("#my_dataviz")
+		// append the SVG object
+		const svg = d3.select("#scatterplot")
 			.append("svg")
 			.attr("width", width + margin.left + margin.right)
 			.attr("height", height + margin.top + margin.bottom)
@@ -40,39 +38,37 @@
 		svg.append("text").attr("y", 0).attr("x", 250).text("Northeast").style("font-size", "15px").attr("alignment-baseline", "middle")
 		svg.append("text").attr("y", 0).attr("x", 350).text("Midwest").style("font-size", "15px").attr("alignment-baseline", "middle")
 
-
+		// import data
 		d3.csv("data/clean/demo_df_d3.csv").then(function (data) {
 
-			// Add X axis
+			// add x axis
 			const x = d3.scaleLinear()
-				.domain([20, 45])
+				.domain([20, 48])
 				.range([0, width]);
 			svg.append("g")
 				.attr("transform", `translate(0, ${height})`)
 				.call(d3.axisBottom(x));
 
-			// Add Y axis
+			// add y axis
 			const y = d3.scaleLinear()
 				.domain([0.80, 1])
 				.range([height, 0]);
 			svg.append("g")
 				.call(d3.axisLeft(y));
 
-			// Color scale: give me a specie name, I return a color
+			// color scale to define region group colors
 			const color = d3.scaleOrdinal()
 				.domain(["West", "South", "Northeast", "Midwest"])
 				.range(["#bebada", "#fb8072", "#80b1d3", "#fdb462"])
 
-
+			// region group highlight function 
 			const highlight = function (event, d) {
 				selected_region = d.region
-
 				d3.selectAll(".dot")
 					.transition()
 					.duration(200)
 					.style("fill", "lightgrey")
 					.attr("r", 3)
-
 				d3.selectAll("." + selected_region)
 					.transition()
 					.duration(200)
@@ -80,8 +76,7 @@
 					.attr("r", 7)
 			}
 
-			// Highlight the specie that is hovered
-			const doNotHighlight = function (event, d) {
+			const noHighlight = function (event, d) {
 				d3.selectAll(".dot")
 					.transition()
 					.duration(200)
@@ -89,8 +84,7 @@
 					.attr("r", 5)
 			}
 
-			// Add a tooltip div. Here I define the general feature of the tooltip: stuff that do not depend on the data point.
-			// Its opacity is set to 0: we don't see it by default.
+			// add tooltip
 			const tooltip = svg
 				.append("text")
 				.attr("x", 10)
@@ -98,7 +92,7 @@
 				.style("visibility", "hidden")
 				;
 
-			// Add dots
+			// add points and define hover/click options
 			svg.append('g')
 				.selectAll("dot")
 				.data(data)
@@ -111,27 +105,22 @@
 				.style("fill", function (d) { return color(d.region) })
 				.style("pointer-events", "all")
 				.on("mouseover", highlight)
-				.on("mouseleave", doNotHighlight)
+				.on("mouseleave", noHighlight)
 				.on("click", function (d, i) {
-					// var coordinates = d3.pointer(this);
-					// console.log(d.clientX, d.clientY)
-					// var x = coordinates[0];
-					// var y = coordinates[1];
 					tooltip.text(i["state"])
 						.style("visibility", "visible")
 						.attr("x", (d.clientX - 120) + "px")
 						.attr("y", (d.clientY - 120) + "px")
 				})
 
-
-			//Create X axis label   
+			// x axis label
 			svg.append("text")
 				.attr("x", width / 2)
 				.attr("y", height + (margin.bottom / 2))
 				.style("text-anchor", "middle")
-				.text("Flu Coverage Rate");
+				.text("Flu Shot Coverage Rate, 2021 (%)");
 
-			//Create Y axis label
+			// y axis label
 			svg.append("text")
 				.attr("transform", "rotate(-90)")
 				.attr("y", 0 - margin.left)
@@ -141,11 +130,7 @@
 				.text("High School Education Ratio");
 
 		})
-
-
-
 	</script>
-
 </body>
 
 </html>
