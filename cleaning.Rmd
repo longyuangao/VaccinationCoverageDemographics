@@ -44,6 +44,8 @@ Added columns: ym: date of the observation, in yyyy-mm-01 format (day doesn't ma
 ```{r}
 flu$ym <- as.Date(paste(stringi::stri_sub(flu$`Season.Survey.Year`, to = 4),"-", flu$Month, "-1", sep = ""))
 flu$`Estimate....` <- as.numeric(flu$`Estimate....`) #NA's!
+
+write.csv(flu, "./data/clean/flu.csv", row.names = FALSE)
 ```
 
 ### Transform education attainment data by state:

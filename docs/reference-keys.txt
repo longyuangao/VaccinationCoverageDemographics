@@ -23,8 +23,10 @@ results
 geographical-patterns
 flu-vaccination-coverage-time-series-patterns
 demographical-patterns
-sorting-out-important-factors-using-biplots
-cleveland-dot-plot-of-most-important-factors
+races-and-age-groups-2021
+races-and-age-groups-a-time-series-analysis
+other-demographics-data-sorting-out-important-factors-using-biplots
+cleveland-dotplot-of-most-important-factors
 time-series-comparison-of-nationanlwide-new-covid-cases-with-flu-vaccination-coverage
 interactive-component
 conclusion
