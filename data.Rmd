@@ -3,7 +3,7 @@
 ## Sources
 
 ### Flu Vaccine Coverage Dataset
-Longyuan Gao is reponsible for collecting the data. The influenza vaccine coverage data is collected from CDC, which is stated in the previous chapter. The dataset is comprehensive in the sense that it records the coverage rate for every state and regions in the United States. Although there is some missing data (like the 2021 June coverage data), the overall quality is adequate enough for us to conduct visualizations. The data is collected from the National Immunization Survey-Flu (NIS-Flu), a national wide survey on vaccination coverage conducted by phone, and the Behavioral Risk Factor Surveillance System, which is another telephone survey. To obtain a CSV file, I just downloaded it from the webpage.
+Longyuan Gao is reponsible for collecting the data. The influenza vaccine coverage data is collected from CDC, which is stated in the previous chapter. The dataset is comprehensive in the sense that it records the coverage rate for every state and regions in the United States. Although there is some missing data (like the June coverage data), the overall quality is adequate enough for us to conduct visualizations. The data is collected from the National Immunization Survey-Flu (NIS-Flu), a national wide survey on vaccination coverage conducted by phone, and the Behavioral Risk Factor Surveillance System, which is another telephone survey. To obtain a CSV file, I just downloaded it from the webpage.
 
 Here is some basic information about this dataset:
 
@@ -89,7 +89,7 @@ gg_miss_upset(flu, nsets = 100)
 
 From the plot, we can see that some rows are missing sample size variable, but since that variable is not taken into consideration, we are not concerned with that variable being NA; Also, some rows are missing Estimate, which is our focus. For rows with missing Estimates, we decided not to impute them, since we cannot be sure what variables it is dependent on. Some rows are also missing estimates and sample sizes together (may be because that record is completely missing).
 
-Other than the missing columns shown in the graph, we are also observing that some rows are missing, such as the 2021 June data mentioned before, which is completely missing without a note. So we are very careful when dealing with the dataset: we regularly check if there is missing data in generated dataframe or abnoramlities in plot.
+Other than the missing columns shown in the graph, we are also observing that some rows are missing, such as all the June data mentioned before, which is completely missing without a note. This may be caused by the reset of vaccine contents at June of each year. Also, some earlier data contains vaccine coverage data for Asians and Native Americans, but that kinds of information is missing in more current data. So we are very careful when dealing with the dataset: we regularly check if there is missing data in generated dataframe or abnoramlities in plot.
 
 ### Demographic datasets
 
