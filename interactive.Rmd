@@ -1,3 +1,15 @@
 # Interactive component
 
+## VizHub
+
+``` {r}
+
+knitr::include_url("https://vizhub.com/etevanss/840ed2d1de264a37b17e0ee991b106aa?file=index.html")
+
+```
+
+[Click Here To See Vizualization](https://vizhub.com/etevanss/840ed2d1de264a37b17e0ee991b106aa?file=index.html)
+
+
+## Takeaways
 
