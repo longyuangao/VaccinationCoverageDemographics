@@ -12,29 +12,7 @@ coverage_by_state <- read.csv("data/clean/coverage_by_state.csv")
 
 ```
 
-```{r}
 
-library(choroplethr)
-
-choropleth_df <-
-  demo_df %>%
-    select(c(state, flu_shot_coverage_2021)) %>%
-    mutate(flu_shot_coverage_2021 = as.integer(flu_shot_coverage_2021)) %>%
-    filter(state != "District of Columbia") %>%
-    transmute(region = tolower(`state`),
-           value =  flu_shot_coverage_2021)
-
-states <- state_choropleth(choropleth_df,
-                 title = "Flu Vaccine Coverage, 2021",
-                 legend = "Percent Covered")
-
-# remove state abbreviation labels
-layer_no <- grep("GeomText", sapply(states$layers, function(x) class(x$geom)[1]))
-states$layers[[layer_no]] <- NULL
-
-states
-
-```
 
 ```{r}
 library(cowplot)
@@ -103,32 +81,68 @@ ggparcoord(demo_df_biplot, columns=2:4,
 ```
 
 ```{r fig1, fig.height = 10, fig.width = 10}
-# knitr::opts_chunk$set(fig.width=20, fig.height=20) 
-# 
-# demo_df_copy <- demo_df
-# rownames(demo_df_copy) <- demo_df_copy[,1]
-# demo_df_copy[,1] <- NULL
-# 
-# 
-# demo_df_biplot <-
-#   demo_df_copy %>%
-#     select(c(household_poverty_rate, flu_shot_coverage_2021))
-# results <- princomp(demo_df_biplot)
-# 
-# #create biplot to visualize results of PCA
-# biplot(results, arrow.len=1, var.axes=TRUE, expand=1.2)
 
 remotes::install_github("jtr13/redav")
 library(redav)
 
 demo_df_biplot <-
   demo_df %>%
-    select(c(state, household_poverty_rate, flu_shot_coverage_2021, median_household_income, high_school_education_ratio)) %>%
+    select(c(state, household_poverty_rate, flu_shot_coverage_2021, median_household_income, high_school_education_ratio, elder_ratio, children_ratio)) %>%
     mutate(across(where(is.numeric), ~round((.x-mean(.x))/sd(.x), 2)))
 
 pca <- prcomp(demo_df_biplot[,2:4], scale. = TRUE)
 
 draw_biplot(demo_df_biplot)
 
+
+```
+
+
+```{r}
+
+library(choroplethr)
+
+choropleth_df <-
+  demo_df %>%
+    select(c(state, flu_shot_coverage_2021)) %>%
+    mutate(flu_shot_coverage_2021 = as.integer(flu_shot_coverage_2021)) %>%
+    filter(state != "District of Columbia") %>%
+    transmute(region = tolower(`state`),
+           value =  flu_shot_coverage_2021)
+
+states <- state_choropleth(choropleth_df,
+                 title = "Flu Vaccine Coverage, 2021",
+                 legend = "Percent Covered")
+
+# remove state abbreviation labels
+layer_no <- grep("GeomText", sapply(states$layers, function(x) class(x$geom)[1]))
+states$layers[[layer_no]] <- NULL
+
+states
+
+```
+
+
+```{r}
+
+library(choroplethr)
+
+choropleth_df <-
+  demo_df %>%
+    select(c(state, household_poverty_rate)) %>%
+    mutate(household_poverty_rate = as.numeric(household_poverty_rate)) %>%
+    filter(state != "District of Columbia") %>%
+    transmute(region = tolower(`state`),
+           value =  household_poverty_rate)
+
+states <- state_choropleth(choropleth_df,
+                 title = "Household Poverty Rate, 2021",
+                 legend = "Percent")
+
+# remove state abbreviation labels
+layer_no <- grep("GeomText", sapply(states$layers, function(x) class(x$geom)[1]))
+states$layers[[layer_no]] <- NULL
+
+states
 
 ```
