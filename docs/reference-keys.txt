@@ -20,5 +20,11 @@ education-attaiment-dataset
 household-income-dataset
 covid-19-cases-dataset
 results
+geographical-patterns
+flu-vaccination-coverage-time-series-patterns
+demographical-patterns
+sorting-out-important-factors-using-biplots
+cleveland-dot-plot-of-most-important-factors
+time-series-comparison-of-nationanlwide-new-covid-cases-with-flu-vaccination-coverage
 interactive-component
 conclusion
