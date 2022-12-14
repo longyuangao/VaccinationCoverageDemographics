@@ -46,8 +46,8 @@ us_by_year %>%
   filter(Season.Survey.Year == "2021-22") %>%
   ggplot(aes(factor(Month), Estimate....)) +
     geom_line(group = 1) +
-    scale_x_date(limits = c(as.Date("2012-02-01"), as.Date("2014-12-31")),  
-        date_breaks = "6 months", date_labels = "%b %Y") 
+    # scale_x_date(limits = c(as.Date("2012-02-01"), as.Date("2014-12-31")),  
+    #     date_breaks = "6 months", date_labels = "%b %Y") 
     # scale_x_date(date_breaks = "years" , date_labels = "%Y") + 
     xlab("Month") + 
     ylab("Percent Coverage") +
