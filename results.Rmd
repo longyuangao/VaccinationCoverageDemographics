@@ -7,6 +7,7 @@ demo_df <- read.csv("data/clean/demo_df.csv")
 us_by_year <- read.csv("data/clean/us_by_year.csv")
 coverage_by_state <- read.csv("data/clean/coverage_by_state.csv")
 
+library(ggthemes)
 ```
 
 ## Geographical Patterns
@@ -48,17 +49,19 @@ p1<- us_by_year %>%
     geom_line(group = 1) +
     scale_x_date(date_breaks = "years" , date_labels = "%Y") + 
     xlab("") + 
-    ylab("Percent Coverage") +
+    ylab("Percent Coverage\n [%]") +
     geom_line(data=maximum, aes(x=as.Date(maximum$ym), y=maximum$Estimate...., ), color ="red")+
-    ggtitle("Flu Shot Coverage, 2009 to 2022")
+    ggtitle("Flu Shot Coverage, 2009 to 2022")+
+  scale_color_colorblind()  
 
 p2 <- us_by_year %>%
   ggplot(aes(as.Date(ym), Estimate....)) +
     geom_smooth(group = 1) +
     scale_x_date(date_breaks = "years" , date_labels = "%Y") + 
     xlab("") + 
-    ylab("Percent Coverage") +
-    ggtitle("Flu Shot Coverage, 2009 to 2022")
+    ylab("Percent Coverage\n [%]") +
+    ggtitle("Flu Shot Coverage, 2009 to 2022")+
+  scale_color_colorblind()  
 
 cowplot::plot_grid(
   p1, p2,
@@ -80,20 +83,28 @@ flu_race<- flu %>% filter(Dimension.Type == "Race/Ethnicity (age ≥6 months onl
                           str_detect(ym, "2021-05-01")) %>% mutate(ym = as.Date(ym))%>% arrange(ym)
 flu_race$Dimension <- fct_reorder(flu_race$Dimension, flu_race$Estimate....)
 race<-ggplot(data=flu_race)+
-  geom_bar(aes(x=	flu_race$Dimension, y=flu_race$Estimate....),stat="identity", fill="skyblue1")+
-  labs(x="Race", y="Flu Vaccination Coverage Rate 2021", title="Flu Vaccination Coverage Rate 2021 by race")+
-  coord_flip()
+  geom_bar(aes(x=	flu_race$Dimension, y=flu_race$Estimate....),stat="identity", fill="skyblue1",alpha=0.7)+
+  labs(x="Race", y="Flu Vaccination Coverage Rate 2021 [%]", title="Flu Vaccination Coverage Rate 2021 by race")+
+  coord_flip()+
+  scale_color_colorblind()  
 
 flu_age<- flu %>% filter(Dimension.Type == "Age",
                           !str_detect(Dimension, "≥6"),
                           Geography.Type == "HHS Regions/National",
                           Geography == "United States",
-                          str_detect(ym, "2021-05-01")) %>% mutate(ym = as.Date(ym))%>% arrange(ym)
+                          str_detect(ym, "2021-05-01")) %>%
+                  filter(Dimension %in% c("6 Months - 4 Years",
+                                          "5-12 Years",
+                                          "13-17 Years",
+                                          "18-64 Years")) %>%
+                  mutate(ym = as.Date(ym))%>% arrange(ym)
+
 flu_age$Dimension <- fct_reorder(flu_age$Dimension, flu_age$Estimate....)
 age<-ggplot(data=flu_age)+
-  geom_bar(aes(x=	flu_age$Dimension, y=flu_age$Estimate....),stat="identity", fill="skyblue1")+
-  labs(x="Age Groups", y="Flu Vaccination Coverage Rate 2021", title="Flu Vaccination Coverage Rate 2021 by Age Group")+
-  coord_flip()
+  geom_bar(aes(x=	flu_age$Dimension, y=flu_age$Estimate....),stat="identity", fill="skyblue1",alpha=0.7)+
+  labs(x="Age Groups", y="Flu Vaccination Coverage Rate 2021 [%]", title="Flu Vaccination Coverage Rate 2021 by Age Group")+
+  coord_flip()+
+  scale_color_colorblind()  
 
 gridExtra::grid.arrange(race,age,nrow=2)
 ```
@@ -104,30 +115,41 @@ gridExtra::grid.arrange(race,age,nrow=2)
 flu_race_ts <- flu %>% filter(Vaccine == "Seasonal Influenza",
                           Dimension.Type == "Race/Ethnicity (age ≥6 months only)",
                           Geography.Type == "HHS Regions/National",
+                          !Dimension %in% c("≥6 months Asian, Non-Hispanic","≥6 months American Indian or Alaska Native, Non-Hispanic"),
                           Geography == "United States",
                           str_detect(ym, ".*-05-01")) %>% mutate(ym = as.Date(ym))%>% arrange(ym)
-flu_race_ts$Dimension[flu_race_ts$Dimension == "≥6 months Other or Multiple Races, Non-Hispanic"] <- "Other or Multiple Races, Non-Hispanic"
 
 ggplot(data=flu_race_ts)+
   geom_line(aes(x=ym,y=flu_race_ts$Estimate....))+
   facet_wrap(.~Dimension)+
-  labs(x="Year", y="Flu Vaccination Coverage Rate",title = "Flu Vaccination Coverage Rate by Race, 2009-2021")
-
+  labs(x="Year", y="Flu Vaccination Coverage Rate\n [%]",title = "Flu Vaccination Coverage Rate by Race, 2009-2021")+
+  scale_color_colorblind()  
 
 
 ```
 
 ```{r}
+
 flu_age_ts <- flu %>% filter(Vaccine == "Seasonal Influenza",
                           Dimension.Type == "Age",
                           !str_detect(Dimension, "≥6"),
                           Geography.Type == "HHS Regions/National",
                           Geography == "United States",
-                          str_detect(ym, ".*-05-01")) %>% mutate(ym = as.Date(ym))%>% arrange(ym)
+                          str_detect(ym, ".*-05-01")) %>% 
+                        filter(Dimension %in% c("6 Months - 4 Years",
+                                          "5-12 Years",
+                                          "13-17 Years",
+                                          "18-64 Years")) %>%mutate(ym = as.Date(ym))%>% arrange(ym)
+flu_age_ts$Dimension <- factor(flu_age_ts$Dimension, levels = c("6 Months - 4 Years",
+                                          "5-12 Years",
+                                          "13-17 Years",
+                                          "18-64 Years"))
 ggplot(data=flu_age_ts)+
   geom_line(aes(x=ym,y=flu_age_ts$Estimate....))+
   facet_wrap(.~Dimension)+
-  labs(x="Year", y="Flu Vaccination Coverage Rate",title = "Flu Vaccination Coverage Rate by Age Group, 2009-2021")
+  labs(x="Year", y="Flu Vaccination Coverage Rate\n[%]
+       ",title = "Flu Vaccination Coverage Rate by Age Group, 2009-2021")+
+  scale_color_colorblind()  
 
 ```
 
@@ -162,7 +184,8 @@ demo_df %>%
     geom_point() +
     ggtitle("Flu Coverage, Education, and Poverty Rates in the US") +
     ylab("") +
-    theme_linedraw()
+    theme_linedraw()+
+  scale_color_colorblind()
 
 
 
@@ -185,9 +208,10 @@ library(scales)
 
 g<-ggplot(new_cases, aes(submission_date, new_covid_case)) + 
   geom_smooth(method = "loess", span = .05, se = FALSE)+
-  scale_x_date(limits = c(as.Date("2019-01-01"),as.Date("2021-12-01")))+
+  scale_x_date(limits = c(as.Date("2018-01-01"),as.Date("2021-12-01")))+
   scale_y_continuous(labels = scales::label_number_si())+
-  labs(y="Count", title="Nationalwide New Covid Cases")
+  labs(y="Count", title="Nationalwide New Covid Cases")+
+  scale_color_colorblind()
   
 coverage_rate <- rename(us_by_year, estimation='Estimate....',record_date='ym')
 coverage_rate$difference_with_previous_month <- append(NA,diff(coverage_rate$estimation))
@@ -195,10 +219,11 @@ coverage_rate$difference_with_previous_month[coverage_rate$difference_with_previ
 coverage_rate$record_date <- as.Date(coverage_rate$record_date)
 
 
-f<-ggplot(coverage_rate, aes(record_date, difference_with_previous_month)) + 
-  geom_smooth(method = "loess", span = .1, se = FALSE)+
-  scale_x_date(limits = c(as.Date("2019-01-01"),as.Date("2021-12-01")))+
-  labs(y="Percentage increase", title="Increase in Nationalwide Flu Vax Coverage Compared to Previous Months (%)")
+# f<-ggplot(coverage_rate, aes(record_date, difference_with_previous_month)) + 
+#   geom_smooth(method = "loess", span = .1, se = FALSE)+
+#   scale_x_date(limits = c(as.Date("2018-01-01"),as.Date("2021-12-01")))+
+#   labs(y="Percentage increase", title="Increase in Nationalwide Flu Vax Coverage Compared to Previous Months (%)")+
+#   scale_color_colorblind()
 
 
 coverage_rate$record_date <- as.Date(coverage_rate$record_date)
@@ -206,10 +231,11 @@ coverage_rate$record_date <- as.Date(coverage_rate$record_date)
 
 h<-ggplot(coverage_rate, aes(record_date, estimation)) + 
   geom_smooth(method = "loess", span = .1, se = FALSE)+
-  scale_x_date(limits = c(as.Date("2019-01-01"),as.Date("2021-12-01")))+
-  labs(y="Coverage Rate", title = "Nationalwide Flu Vaccination Coverage Rate (%)")
+  scale_x_date(limits = c(as.Date("2018-01-01"),as.Date("2021-12-01")))+
+  labs(y="Coverage Rate", title = "Nationalwide Flu Vaccination Coverage Rate (%)")+
+  scale_color_colorblind()
 
-plot_grid(g,f,h, nrow=3,align = "v")
+plot_grid(g,h, nrow=2,align = "v")
 ```
 
 
