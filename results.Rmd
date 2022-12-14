@@ -1,1 +1,144 @@
 # Results
+
+```{r}
+# read in clean data
+
+demo_df <- read.csv("data/clean/demo_df.csv")
+us_by_year <- read.csv("data/clean/us_by_year.csv")
+coverage_by_state <- read.csv("data/clean/coverage_by_state.csv")
+
+```
+
+
+
+```{r}
+library(cowplot)
+
+lm <- lm(Estimate.... ~ as.Date(ym), data=us_by_year)
+
+p1<- us_by_year %>%
+  ggplot(aes(as.Date(ym), Estimate....)) +
+    geom_line(group = 1) +
+    scale_x_date(date_breaks = "years" , date_labels = "%Y") + 
+    xlab("") + 
+    ylab("Percent Coverage") +
+  geom_abline(
+              intercept = coef(lm)[["(Intercept)"]],
+              slope=coef(lm)[["as.Date(ym)"]],
+              color="red")+
+    ggtitle("Flu Shot Coverage, 2009 to 2022")
+
+p2 <- us_by_year %>%
+  ggplot(aes(as.Date(ym), Estimate....)) +
+    geom_smooth(group = 1) +
+    scale_x_date(date_breaks = "years" , date_labels = "%Y") + 
+    xlab("") + 
+    ylab("Percent Coverage") +
+    ggtitle("Flu Shot Coverage, 2009 to 2022")
+
+cowplot::plot_grid(
+  p1, p2,
+  labels = "AUTO", ncol = 1
+)
+
+```
+```{r}
+
+
+us_by_year %>%
+  filter(Season.Survey.Year == "2021-22") %>%
+  ggplot(aes(factor(Month), Estimate....)) +
+    geom_line(group = 1) +
+    # scale_x_date(limits = c(as.Date("2012-02-01"), as.Date("2014-12-31")),  
+    #     date_breaks = "6 months", date_labels = "%b %Y") 
+    # scale_x_date(date_breaks = "years" , date_labels = "%Y") + 
+    xlab("Month") + 
+    ylab("Percent Coverage") +
+    ggtitle("Flu Shot Coverage, 2021 to 2022")
+
+
+```
+
+
+```{r}
+
+demo_df %>%
+  select(c(state, flu_shot_coverage_2021, high_school_education_ratio, household_poverty_rate)) %>%
+  mutate(across(where(is.numeric), ~round((.x-mean(.x))/sd(.x), 2))) %>%
+  gather(key='type',value='percentage',flu_shot_coverage_2021, high_school_education_ratio, household_poverty_rate) %>%
+  ggplot(aes(x=percentage, y=fct_reorder2(state,type=='household_poverty_rate',percentage,.desc=FALSE), color = type)) +
+    geom_point() +
+    ggtitle("Flu Coverage, Education, and Poverty Rates in the US") +
+    ylab("") +
+    theme_linedraw()
+
+
+
+```
+
+```{r fig1, fig.height = 10, fig.width = 10}
+
+remotes::install_github("jtr13/redav")
+library(redav)
+
+demo_df_biplot <-
+  demo_df %>%
+    select(c(state, household_poverty_rate, flu_shot_coverage_2021, median_household_income, high_school_education_ratio, elder_ratio, children_ratio)) %>%
+    mutate(across(where(is.numeric), ~round((.x-mean(.x))/sd(.x), 2)))
+
+pca <- prcomp(demo_df_biplot[,2:4], scale. = TRUE)
+
+draw_biplot(demo_df_biplot)
+
+
+```
+
+
+```{r}
+
+library(choroplethr)
+
+choropleth_df <-
+  demo_df %>%
+    select(c(state, flu_shot_coverage_2021)) %>%
+    mutate(flu_shot_coverage_2021 = as.integer(flu_shot_coverage_2021)) %>%
+    filter(state != "District of Columbia") %>%
+    transmute(region = tolower(`state`),
+           value =  flu_shot_coverage_2021)
+
+states <- state_choropleth(choropleth_df,
+                 title = "Flu Vaccine Coverage, 2021",
+                 legend = "Percent Covered")
+
+# remove state abbreviation labels
+layer_no <- grep("GeomText", sapply(states$layers, function(x) class(x$geom)[1]))
+states$layers[[layer_no]] <- NULL
+
+states
+
+```
+
+
+```{r}
+
+library(choroplethr)
+
+choropleth_df <-
+  demo_df %>%
+    select(c(state, household_poverty_rate)) %>%
+    mutate(household_poverty_rate = as.numeric(household_poverty_rate)) %>%
+    filter(state != "District of Columbia") %>%
+    transmute(region = tolower(`state`),
+           value =  household_poverty_rate)
+
+states <- state_choropleth(choropleth_df,
+                 title = "Household Poverty Rate, 2021",
+                 legend = "Percent")
+
+# remove state abbreviation labels
+layer_no <- grep("GeomText", sapply(states$layers, function(x) class(x$geom)[1]))
+states$layers[[layer_no]] <- NULL
+
+states
+
+```
