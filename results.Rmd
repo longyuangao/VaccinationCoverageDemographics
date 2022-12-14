@@ -69,7 +69,69 @@ cowplot::plot_grid(
 
 ## Demographical Patterns
 
-### Sorting out important factors using biplots
+### Races and Age Groups: 2021
+
+```{r}
+library(forcats)
+flu <- read.csv("./data/clean/flu.csv")
+flu_race<- flu %>% filter(Dimension.Type == "Race/Ethnicity (age ≥6 months only)",
+                          Geography.Type == "HHS Regions/National",
+                          Geography == "United States",
+                          str_detect(ym, "2021-05-01")) %>% mutate(ym = as.Date(ym))%>% arrange(ym)
+flu_race$Dimension <- fct_reorder(flu_race$Dimension, flu_race$Estimate....)
+race<-ggplot(data=flu_race)+
+  geom_bar(aes(x=	flu_race$Dimension, y=flu_race$Estimate....),stat="identity", fill="skyblue1")+
+  labs(x="Race", y="Flu Vaccination Coverage Rate 2021", title="Flu Vaccination Coverage Rate 2021 by race")+
+  coord_flip()
+
+flu_age<- flu %>% filter(Dimension.Type == "Age",
+                          !str_detect(Dimension, "≥6"),
+                          Geography.Type == "HHS Regions/National",
+                          Geography == "United States",
+                          str_detect(ym, "2021-05-01")) %>% mutate(ym = as.Date(ym))%>% arrange(ym)
+flu_age$Dimension <- fct_reorder(flu_age$Dimension, flu_age$Estimate....)
+age<-ggplot(data=flu_age)+
+  geom_bar(aes(x=	flu_age$Dimension, y=flu_age$Estimate....),stat="identity", fill="skyblue1")+
+  labs(x="Age Groups", y="Flu Vaccination Coverage Rate 2021", title="Flu Vaccination Coverage Rate 2021 by Age Group")+
+  coord_flip()
+
+gridExtra::grid.arrange(race,age,nrow=2)
+```
+
+### Races and Age Groups: A Time Series Analysis
+
+```{r}
+flu_race_ts <- flu %>% filter(Vaccine == "Seasonal Influenza",
+                          Dimension.Type == "Race/Ethnicity (age ≥6 months only)",
+                          Geography.Type == "HHS Regions/National",
+                          Geography == "United States",
+                          str_detect(ym, ".*-05-01")) %>% mutate(ym = as.Date(ym))%>% arrange(ym)
+flu_race_ts$Dimension[flu_race_ts$Dimension == "≥6 months Other or Multiple Races, Non-Hispanic"] <- "Other or Multiple Races, Non-Hispanic"
+
+ggplot(data=flu_race_ts)+
+  geom_line(aes(x=ym,y=flu_race_ts$Estimate....))+
+  facet_wrap(.~Dimension)+
+  labs(x="Year", y="Flu Vaccination Coverage Rate",title = "Flu Vaccination Coverage Rate by Race, 2009-2021")
+
+
+
+```
+
+```{r}
+flu_age_ts <- flu %>% filter(Vaccine == "Seasonal Influenza",
+                          Dimension.Type == "Age",
+                          !str_detect(Dimension, "≥6"),
+                          Geography.Type == "HHS Regions/National",
+                          Geography == "United States",
+                          str_detect(ym, ".*-05-01")) %>% mutate(ym = as.Date(ym))%>% arrange(ym)
+ggplot(data=flu_age_ts)+
+  geom_line(aes(x=ym,y=flu_age_ts$Estimate....))+
+  facet_wrap(.~Dimension)+
+  labs(x="Year", y="Flu Vaccination Coverage Rate",title = "Flu Vaccination Coverage Rate by Age Group, 2009-2021")
+
+```
+
+### Other Demographics Data: Sorting Out Important Factors Using Biplots
 
 ```{r fig1, fig.height = 10, fig.width = 10}
 
@@ -88,7 +150,7 @@ draw_biplot(demo_df_biplot)
 
 ```
 
-### Cleveland dot plot of most important factors
+### Cleveland Dotplot of Most Important Factors
 
 ```{r}
 
@@ -127,11 +189,12 @@ coverage_rate$difference_with_previous_month <- append(NA,diff(coverage_rate$est
 coverage_rate$difference_with_previous_month[coverage_rate$difference_with_previous_month<0]<-0
 coverage_rate$record_date <- as.Date(coverage_rate$record_date)
 f<-ggplot(coverage_rate, aes(record_date, difference_with_previous_month)) + 
-  geom_line()+
   geom_smooth(method = "loess", span = .1, se = FALSE)+
   scale_x_date(limits = c(as.Date("2019-01-01"),as.Date("2021-12-01")))
 plot_grid(g,f,nrow=2,align = "v")
 ```
+
+
 
 
 ```{r}
