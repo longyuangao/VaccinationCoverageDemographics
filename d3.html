@@ -3,7 +3,7 @@
 
 <head>
 	<meta charset="utf-8">
-	<title>D3 Component - Interactive Choropleth</title>
+	<title>D3 Component - Interactive Scatterplot</title>
 	<script src="https://d3js.org/d3.v7.js"></script>
 </head>
 
@@ -109,8 +109,8 @@
 				.on("click", function (d, i) {
 					tooltip.text(i["state"])
 						.style("visibility", "visible")
-						.attr("x", (d.clientX - 120) + "px")
-						.attr("y", (d.clientY - 120) + "px")
+						.attr("x", (d.clientX - 100) + "px")
+						.attr("y", (d.clientY - 175) + "px")
 				})
 
 			// x axis label
