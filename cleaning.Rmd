@@ -238,13 +238,12 @@ ggplot(coverage_rate, aes(ym, estimation)) +
 ```{r}
 #state based flu data
 
-nonWantedLevels<-c("Guam", "IL-City of Chicago", "IL-Rest of state", "NY-City of New York", "NY-Rest of state", "PA-Philadelphia", "PA-Rest of state", "TX-Bexar County", "TX-City of Houston", "TX-Rest of state", "Puerto Rico", "U.S. Virgin Islands")
-
 test <-
   flu %>%
     filter(Vaccine=="Seasonal Influenza") %>%
-    filter(Geography.Type == "States/Local Areas") %>%
-    filter(!Geography %in% nonWantedLevels)
+    filter(Geography.Type == "States/Local Areas",
+    Dimension.Type =="Age",
+    Dimension=="≥6 Months") %>% arrange(ym)
 
 write.csv(test,"data/clean/coverage_by_state.csv")
 
