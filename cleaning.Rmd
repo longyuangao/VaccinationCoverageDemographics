@@ -165,7 +165,7 @@ shot_by_state = flu
 shot_by_state <- shot_by_state %>% filter(Vaccine=="Seasonal Influenza", #H1N1 vaccines are only provided in 2009
                      flu$`Geography.Type`=="States/Local Areas", 
                      Dimension.Type =="Age",
-                     ym >= as.Date("2021-01-01"), #Missing June! Only 11 Months!
+                     ym == as.Date("2021-05-01"), #Missing June! Only 11 Months!
                      Dimension=="≥6 Months") %>% 
   group_by(Geography)%>%
   arrange(ym) %>%
