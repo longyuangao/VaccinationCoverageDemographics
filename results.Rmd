@@ -13,7 +13,8 @@ library(ggthemes)
 ## Geographical Patterns
 
 ```{r}
-
+library(dplyr)
+library(tidyverse)
 library(choroplethr)
 
 choropleth_df <-
@@ -89,14 +90,15 @@ race<-ggplot(data=flu_race)+
   scale_color_colorblind()  
 
 flu_age<- flu %>% filter(Dimension.Type == "Age",
-                          !str_detect(Dimension, "≥6"),
+                          #!str_detect(Dimension, "≥6"),
                           Geography.Type == "HHS Regions/National",
                           Geography == "United States",
                           str_detect(ym, "2021-05-01")) %>%
                   filter(Dimension %in% c("6 Months - 4 Years",
                                           "5-12 Years",
                                           "13-17 Years",
-                                          "18-64 Years")) %>%
+                                          "18-64 Years",
+                                          "≥6 Months")) %>%
                   mutate(ym = as.Date(ym))%>% arrange(ym)
 
 flu_age$Dimension <- fct_reorder(flu_age$Dimension, flu_age$Estimate....)
@@ -132,18 +134,20 @@ ggplot(data=flu_race_ts)+
 
 flu_age_ts <- flu %>% filter(Vaccine == "Seasonal Influenza",
                           Dimension.Type == "Age",
-                          !str_detect(Dimension, "≥6"),
+                          #!str_detect(Dimension, "≥6"),
                           Geography.Type == "HHS Regions/National",
                           Geography == "United States",
                           str_detect(ym, ".*-05-01")) %>% 
                         filter(Dimension %in% c("6 Months - 4 Years",
                                           "5-12 Years",
                                           "13-17 Years",
-                                          "18-64 Years")) %>%mutate(ym = as.Date(ym))%>% arrange(ym)
+                                          "18-64 Years",
+                                          "≥6 Months")) %>%mutate(ym = as.Date(ym))%>% arrange(ym)
 flu_age_ts$Dimension <- factor(flu_age_ts$Dimension, levels = c("6 Months - 4 Years",
                                           "5-12 Years",
                                           "13-17 Years",
-                                          "18-64 Years"))
+                                          "18-64 Years",
+                                          "≥6 Months"))
 ggplot(data=flu_age_ts)+
   geom_line(aes(x=ym,y=flu_age_ts$Estimate....))+
   facet_wrap(.~Dimension)+
