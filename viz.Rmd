@@ -14,45 +14,121 @@ coverage_by_state <- read.csv("data/clean/coverage_by_state.csv")
 
 ```{r}
 
-coverage_by_state
+library(choroplethr)
 
+choropleth_df <-
+  demo_df %>%
+    select(c(state, flu_shot_coverage_2021)) %>%
+    mutate(flu_shot_coverage_2021 = as.integer(flu_shot_coverage_2021)) %>%
+    filter(state != "District of Columbia") %>%
+    transmute(region = tolower(`state`),
+           value =  flu_shot_coverage_2021)
+
+states <- state_choropleth(choropleth_df,
+                 title = "Flu Vaccine Coverage, 2021",
+                 legend = "Percent Covered")
+
+# remove state abbreviation labels
+layer_no <- grep("GeomText", sapply(states$layers, function(x) class(x$geom)[1]))
+states$layers[[layer_no]] <- NULL
+
+states
 
 ```
 
 ```{r}
-# plots!
+library(cowplot)
+
+p1<- us_by_year %>%
+  ggplot(aes(as.Date(ym), Estimate....)) +
+    geom_line(group = 1) +
+    scale_x_date(date_breaks = "years" , date_labels = "%Y") + 
+    xlab("") + 
+    ylab("Percent Coverage") +
+    ggtitle("Flu Shot Coverage, 2009 to 2022")
+
+p2 <- us_by_year %>%
+  ggplot(aes(as.Date(ym), Estimate....)) +
+    geom_smooth(group = 1) +
+    scale_x_date(date_breaks = "years" , date_labels = "%Y") + 
+    xlab("") + 
+    ylab("Percent Coverage") +
+    ggtitle("Flu Shot Coverage, 2009 to 2022")
+
+cowplot::plot_grid(
+  p1, p2,
+  labels = "AUTO", ncol = 1
+)
+
+```
+```{r}
+
 
 us_by_year %>%
-  # filter(Season.Survey.Year == "2009-10") %>%
-  ggplot(aes(ym, Estimate....)) +
-    geom_line(group = 1) + 
-    facet_grid(.~Season.Survey.Year)
+  filter(Season.Survey.Year == "2021-22") %>%
+  ggplot(aes(factor(Month), Estimate....)) +
+    geom_line(group = 1) +
+    scale_x_date(limits = c(as.Date("2012-02-01"), as.Date("2014-12-31")),  
+        date_breaks = "6 months", date_labels = "%b %Y") 
+    # scale_x_date(date_breaks = "years" , date_labels = "%Y") + 
+    xlab("Month") + 
+    ylab("Percent Coverage") +
+    ggtitle("Flu Shot Coverage, 2021 to 2022")
 
 
 ```
+
 
 ```{r}
 
 demo_df %>%
-  ggplot(aes(x = state, y = flu_shot_coverage_2021)) +
-  geom_col()
-    # facet_grid(.~Season.Survey.Year)
+  select(c(state, flu_shot_coverage_2021, high_school_education_ratio, household_poverty_rate)) %>%
+  mutate(across(where(is.numeric), ~round((.x-mean(.x))/sd(.x), 2))) %>%
+  gather(key='type',value='percentage',flu_shot_coverage_2021, high_school_education_ratio, household_poverty_rate) %>%
+  ggplot(aes(x=percentage, y=fct_reorder2(state,type=='household_poverty_rate',percentage,.desc=FALSE), color = type)) +
+    geom_point() +
+    ggtitle("Flu Coverage, Education, and Poverty Rates in the US") +
+    ylab("") +
+    theme_linedraw()
+
 
 
 ```
-
-
 ```{r}
 
 
-rownames(demo_df) <- demo_df[,1]
-demo_df[,1] <- NULL
+ggparcoord(demo_df_biplot, columns=2:4, 
+           title = "Parallel coordinate plot for Iris flowers")
+
+```
+
+```{r fig1, fig.height = 10, fig.width = 10}
+# knitr::opts_chunk$set(fig.width=20, fig.height=20) 
+# 
+# demo_df_copy <- demo_df
+# rownames(demo_df_copy) <- demo_df_copy[,1]
+# demo_df_copy[,1] <- NULL
+# 
+# 
+# demo_df_biplot <-
+#   demo_df_copy %>%
+#     select(c(household_poverty_rate, flu_shot_coverage_2021))
+# results <- princomp(demo_df_biplot)
+# 
+# #create biplot to visualize results of PCA
+# biplot(results, arrow.len=1, var.axes=TRUE, expand=1.2)
+
+remotes::install_github("jtr13/redav")
+library(redav)
+
 demo_df_biplot <-
   demo_df %>%
-    select(c(tot_pop, mean_household_income, flu_shot_coverage_2021))
-results <- princomp(demo_df_biplot)
+    select(c(state, household_poverty_rate, flu_shot_coverage_2021, median_household_income, high_school_education_ratio)) %>%
+    mutate(across(where(is.numeric), ~round((.x-mean(.x))/sd(.x), 2)))
 
-#create biplot to visualize results of PCA
-biplot(results)
+pca <- prcomp(demo_df_biplot[,2:4], scale. = TRUE)
+
+draw_biplot(demo_df_biplot)
+
 
 ```
