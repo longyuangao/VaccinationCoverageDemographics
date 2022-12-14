@@ -182,16 +182,30 @@ new_cases$submission_date <- as.Date(new_cases$submission_date, format = "%m/%d/
 new_cases <- arrange(new_cases,submission_date)
 g<-ggplot(new_cases, aes(submission_date, new_covid_case)) + 
   geom_smooth(method = "loess", span = .05, se = FALSE)+
-  scale_x_date(limits = c(as.Date("2019-01-01"),as.Date("2021-12-01")))
+  scale_x_date(limits = c(as.Date("2019-01-01"),as.Date("2021-12-01")))+
+  labs(y="Count", title="Nationalwide New Covid Cases")
   
 coverage_rate <- rename(us_by_year, estimation='Estimate....',record_date='ym')
 coverage_rate$difference_with_previous_month <- append(NA,diff(coverage_rate$estimation))
 coverage_rate$difference_with_previous_month[coverage_rate$difference_with_previous_month<0]<-0
 coverage_rate$record_date <- as.Date(coverage_rate$record_date)
+
+
 f<-ggplot(coverage_rate, aes(record_date, difference_with_previous_month)) + 
   geom_smooth(method = "loess", span = .1, se = FALSE)+
-  scale_x_date(limits = c(as.Date("2019-01-01"),as.Date("2021-12-01")))
-plot_grid(g,f,nrow=2,align = "v")
+  scale_x_date(limits = c(as.Date("2019-01-01"),as.Date("2021-12-01")))+
+  labs(y="Percentage increase", title="Increase in Nationalwide Flu Vax Coverage Compared to Previous Months (%)")
+
+
+coverage_rate$record_date <- as.Date(coverage_rate$record_date)
+
+
+h<-ggplot(coverage_rate, aes(record_date, estimation)) + 
+  geom_smooth(method = "loess", span = .1, se = FALSE)+
+  scale_x_date(limits = c(as.Date("2019-01-01"),as.Date("2021-12-01")))+
+  labs(y="Coverage Rate", title = "Nationalwide Flu Vaccination Coverage Rate (%)")
+
+plot_grid(g,f,h, nrow=3,align = "v")
 ```
 
 
