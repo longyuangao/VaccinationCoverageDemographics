@@ -29,4 +29,6 @@ other-demographics-data-sorting-out-important-factors-using-biplots
 cleveland-dotplot-of-most-important-factors
 time-series-comparison-of-nationanlwide-new-covid-cases-with-flu-vaccination-coverage
 interactive-component
+vizhub
+takeaways
 conclusion
