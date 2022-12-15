@@ -95,7 +95,8 @@ Other than the missing columns shown in the graph, we are also observing that so
 
 #### Population dataset
 
-Since visualizations for the whole dataset is unhelpful and somewhat meaningless (there are so many columns, and some columns are intended to be NA), we only visualize the missing values on the subsets of the datasets which are used in our analyses.
+Since visualizations for the whole dataset is unhelpful and somewhat meaningless (there are so many columns, and some columns are intended to be NA), we only visualize the missing values on the subsets of the datasets which are used in our analyses. Moreover, if we add features names, the plot will be unreadable. So we decided to leave them in the form "V+number". If there are any missing values, we will dig deeper into that.
+
 ```{r}
 pop <- read.csv("./data/raw/population.csv")
 rowname = pop$Label..Grouping
