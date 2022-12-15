@@ -3,45 +3,45 @@
 ## Sources
 
 ### Flu Vaccine Coverage Dataset
-Longyuan Gao is responsible for collecting the data. The influenza vaccine coverage data is collected from the CDC, which is stated in the previous chapter. The dataset is comprehensive in the sense that it records the coverage rate for every state and region in the United States. Although there is some missing data (like the June coverage data), the overall quality is adequate enough for us to conduct visualizations. The data is collected from the National Immunization Survey-Flu (NIS-Flu), a national wide survey on vaccination coverage conducted by phone, and the Behavioral Risk Factor Surveillance System, which is another telephone survey. To obtain a CSV file, I just downloaded it from the webpage.
+Longyuan Gao was primarily responsible for collecting the data within our team. The influenza vaccine coverage data is collected from the CDC, as stated in the previous chapter. The dataset is comprehensive in the sense that it records the coverage rate for every state and region in the United States. Although there is some missing data (June coverage data, for example), the overall quality is adequate for us to conduct visualizations. The data is collected from the National Immunization Survey-Flu (NIS-Flu), a national wide survey on vaccination coverage conducted by phone, and the Behavioral Risk Factor Surveillance System, which is another telephone survey. To obtain the CSV file, we downloaded it from the webpage.
 
 Here is some basic information about this dataset:
 
 Variables: vaccine type, geography(state/county/region, corresponding name, and a FIPS number), season(year), month, dimension(type(age/ethnicity), metric(>6 year, e.g.)), estimated coverage, sample size, and CI.
 
-Number of records: about 185K.
+Number of records: roughly 185,000
 
-Problems: There are certain time periods where data is completely missing (like June 2021), and all the cells are in chr form, not numeric form. So that will bring some difficulties in the data transformation step.
+Problems: There are certain time periods where data is completely missing (like June 2021), and all the cells are in character form rather than numeric form. This will require some data transformation.
 
 ### Demographic Datasets
 
-For demographics data, I used all three nationwide census datasets (population, education attainment, and income) listed in the previous chapter. The census are all from 2021 since The latest data in the flu shot dataset is in 2021 (so that we can compare flu vaccine coverage rate with other demographics information in the same time scale). It is collected by the yearly American Community Survey conducted by Census Bureau. The data is available for download right on the webpage.
+For demographics data, we utilized all three nationwide census datasets (population, education attainment, and income) listed in the previous chapter. The census data come from 2021, just like the flu shot dataset. Thus, we can compare flu vaccine coverage rate with demographic information in the same time frame. It is collected by the annual American Community Survey conducted by Census Bureau. The data is available for download right on the webpage.
 
 Here is some basic information about these datasets:
 
 Variables and number of records: 
 
-Education attainment: age groups by education attainment (for example, high school degree for people >25), race groups by education, poverty rate, median earnings, etc. This dataset is not tidy, so we are to decide which metrics are variables, about 1 observation for each state.
+Education attainment: age groups by education attainment (for example, high school degree for people >25), race groups by education, poverty rate, median earnings, etc. This dataset is not tidy, so we are to decide which metrics are variables.There is  about 1 observation for each state.
 
-Population: similar situation to education, this dataset is not tidy. Variables are age groups (<5, 5-9, etc.), selected age categories, statistical summaries, etc., and about 1 observation for each state.
+Population: similar to the education dataset, it is not tidy. Variables are age groups (<5, 5-9, etc.), selected age categories, statistical summaries, etc., and about 1 observation for each state.
 
 Income: total population in that state, income ranges, median, mean, etc., about 1 observation for each state.
 
 Problems:
 
-All of these three datasets are in chr form, so we have to spend time transforming these characters to numeric. Also, these datasets are in a nested column form, meaning that there are columns within a column if we view them in Excel. So, we have to find a way to deal with this kind of format. Moreover, there are so many variables that we do not need, so we also need to deal with the superfluous columns.
+All of these datasets store variables in character form, so we have to spend time transforming these characters to numeric. Also, these datasets are in a nested column form, meaning that there are columns within a column if we view them in software like Excel. This poses a challenge for cleaning as well. Moreover, there are so many variables that we do not need, so we also need to deal with the extraneous columns.
 
-### COVID-19 Case Dataset
-For COVID-19 case data, I again downloaded it from the CDC, as documented above. The dataset starts in 2020 and ends in 2022, which overlaps the flu shots data in the years 2020 and 2021, giving us the opportunity to visualize some trends in COVID cases and flu shots in the same time scale. The data is collected by local reports. The dataset is available for downloading online.
+### COVID-19 Cases Dataset
 
-Variables: submission date, state, total number of cases, Total probable cases, total confirmed cases, number of new cases, number of new probable cases, total number of deaths, total number of confirmed deaths
+For the COVID-19 cases data, I again downloaded it from the CDC website, as documented above. The dataset starts in 2020 and ends in 2022 which overlaps the flu shots data in the years 2020 and 2021, giving us the opportunity to visualize some trends in COVID cases and flu shots in the same time frame. The data is collected by local reports and is available for downloading online.
 
-Number of Records: about 60.1k.
+Variables: submission date, state, total number of cases, total probable cases, total confirmed cases, number of new cases, number of new probable cases, total number of deaths, total number of confirmed deaths
 
-Problems: There are many variables we don’t need in this project. So, we have to select related columns before we do the analysis. And many rows have 0 and NAs. We should take this into consideration during analysis.
+Number of Records: roughly 60,100
+
+Problems: There are many variables that are unnecessary for our analyses. Thus, we have to select relevant columns before we conduct the analysis. Many cells have NA values and 0s which lead to a sparse dataset.
 
 ## Data Cleaning and Transformation
-
 
 ### Flu Vaccine Coverage Dataset
 
