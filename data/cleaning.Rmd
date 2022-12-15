@@ -205,19 +205,6 @@ write.csv(us_by_year, "./clean/us_by_year.csv", row.names=FALSE)
 
 ```
 
-```{r}
-#state based flu data
 
-test <-
-  flu %>%
-    filter(Vaccine=="Seasonal Influenza") %>%
-    filter(Geography.Type == "States/Local Areas",
-    Dimension.Type =="Age",
-    Dimension=="≥6 Months") %>% arrange(ym)
-
-write.csv(test,"./clean/coverage_by_state.csv")
-
-
-```
 
 
