@@ -3,7 +3,7 @@
 ## Sources
 
 ### Flu Vaccine Coverage Dataset
-Longyuan Gao is responsible for collecting the data. The influenza vaccine coverage data is collected from CDC, which is stated in the previous chapter. The dataset is comprehensive in the sense that it records the coverage rate for every state and region in the United States. Although there is some missing data (like the June coverage data), the overall quality is adequate enough for us to conduct visualizations. The data is collected from the National Immunization Survey-Flu (NIS-Flu), a national wide survey on vaccination coverage conducted by phone, and the Behavioral Risk Factor Surveillance System, which is another telephone survey. To obtain a CSV file, I just downloaded it from the webpage.
+Longyuan Gao is responsible for collecting the data. The influenza vaccine coverage data is collected from the CDC, which is stated in the previous chapter. The dataset is comprehensive in the sense that it records the coverage rate for every state and region in the United States. Although there is some missing data (like the June coverage data), the overall quality is adequate enough for us to conduct visualizations. The data is collected from the National Immunization Survey-Flu (NIS-Flu), a national wide survey on vaccination coverage conducted by phone, and the Behavioral Risk Factor Surveillance System, which is another telephone survey. To obtain a CSV file, I just downloaded it from the webpage.
 
 Here is some basic information about this dataset:
 
