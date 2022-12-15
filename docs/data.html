@@ -116,7 +116,7 @@
 <li class="chapter" data-level="5" data-path="interactive-component.html"><a href="interactive-component.html"><i class="fa fa-check"></i><b>5</b> Interactive component</a>
 <ul>
 <li class="chapter" data-level="5.1" data-path="interactive-component.html"><a href="interactive-component.html#vizhub"><i class="fa fa-check"></i><b>5.1</b> VizHub</a></li>
-<li class="chapter" data-level="5.2" data-path="interactive-component.html"><a href="interactive-component.html#takeaways"><i class="fa fa-check"></i><b>5.2</b> Takeaways</a></li>
+<li class="chapter" data-level="5.2" data-path="interactive-component.html"><a href="interactive-component.html#summary-and-takeaways"><i class="fa fa-check"></i><b>5.2</b> Summary and Takeaways</a></li>
 </ul></li>
 <li class="chapter" data-level="6" data-path="conclusion.html"><a href="conclusion.html"><i class="fa fa-check"></i><b>6</b> Conclusion</a></li>
 <li class="divider"></li>
@@ -164,9 +164,9 @@
 <div id="covid-19-case-dataset" class="section level3 hasAnchor" number="3.1.3">
 <h3><span class="header-section-number">3.1.3</span> COVID-19 Case Dataset<a href="data.html#covid-19-case-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h3>
 <p>For COVID-19 case data, I again downloaded it from the CDC, as documented above. The dataset starts from 2020 and ends in 2022, which overlapps the flu shots data in years 2020 and 2021, given us the opportunity to visualize some trends in COVID cases and flu shots in the same time scale. The data is collected by local reports. The dataset is availabe for downloading online.</p>
-<p>Variables: &gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;&gt;MISSING&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</p>
-<p>Number of Records:</p>
-<p>Problems:</p>
+<p>Variables: submission date, state, total number of cases, Total probable cases, total confirmed cases, number of new cases, number of new probable cases, total number of deaths, total number of confirmed deaths</p>
+<p>Number of Records: about 60.1k.</p>
+<p>Problems: There are many variables we don’t need in this project. So, we have to select related columns before we do analysis. And many rows have 0 and NAs. We should take this into consideration during analysis.</p>
 </div>
 </div>
 <div id="data-cleaning-and-transformation" class="section level2 hasAnchor" number="3.2">

@@ -30,5 +30,5 @@ cleveland-dotplot-of-most-important-factors
 time-series-comparison-of-nationanlwide-new-covid-cases-with-flu-vaccination-coverage
 interactive-component
 vizhub
-takeaways
+summary-and-takeaways
 conclusion
