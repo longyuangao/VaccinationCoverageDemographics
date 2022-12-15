@@ -22,12 +22,12 @@ covid-19-cases-dataset-1
 results
 geographical-patterns
 flu-vaccination-coverage-time-series-patterns
-demographical-patterns
-races-and-age-groups-2021
+demographic-patterns
+race-and-age-groups-2021
 races-and-age-groups-a-time-series-analysis
-other-demographics-data-sorting-out-important-factors-using-biplots
+socioeconomic-data-finding-important-factors-with-biplots
 cleveland-dotplot-of-most-important-factors
-time-series-comparison-of-nationwide-new-covid-cases-with-flu-vaccination-coverage
+covid-cases-vs.-flu-vaccination-coverage-time-series-comparison
 interactive-component
 vizhub
 summary-and-takeaways

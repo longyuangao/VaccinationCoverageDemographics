@@ -100,7 +100,7 @@ flu_race<- flu %>% filter(Dimension.Type == "Race/Ethnicity (age ≥6 months onl
 flu_race$Dimension <- fct_reorder(flu_race$Dimension, flu_race$Estimate....)
 race<-ggplot(data=flu_race)+
   geom_bar(aes(x=	flu_race$Dimension, y=flu_race$Estimate....),stat="identity", fill="skyblue1",alpha=0.7)+
-  labs(x="Race", y="Flu Vaccination Coverage Rate 2021 [%]", title="Flu Vaccination Coverage Rate 2021 by race")+
+  labs(x="Race", y="Flu Vaccination Coverage Rate 2021 [%]", title="Flu Vaccination Coverage Rate 2021 by Race Group")+
   coord_flip()+
   scale_color_colorblind()  
 
@@ -146,7 +146,7 @@ flu_race_ts <- flu %>% filter(Vaccine == "Seasonal Influenza",
 ggplot(data=flu_race_ts)+
   geom_line(aes(x=ym,y=flu_race_ts$Estimate....))+
   facet_wrap(.~Dimension)+
-  labs(x="Year", y="Flu Vaccination Coverage Rate\n [%]",title = "Flu Vaccination Coverage Rate by Race, 2010-2021")+
+  labs(x="Year", y="Flu Vaccination Coverage Rate\n [%]",title = "Flu Vaccination Coverage Rate by Race Group, 2009-2021")+
   scale_y_continuous(limits = c(0,59))+
   scale_color_colorblind()  
 
@@ -180,7 +180,7 @@ ggplot(data=flu_age_ts)+
   geom_line(aes(x=ym,y=flu_age_ts$Estimate....))+
   facet_wrap(.~Dimension)+
   labs(x="Year", y="Flu Vaccination Coverage Rate\n[%]
-       ",title = "Flu Vaccination Coverage Rate by Age Group, 2010-2021")+
+       ",title = "Flu Vaccination Coverage Rate by Age Group, 2009-2021")+
   scale_y_continuous(limits = c(0,80))+
   scale_color_colorblind()  
 
@@ -233,6 +233,7 @@ demo_df %>%
   ggplot() +
     geom_point(aes(x=percentage, y=fct_reorder2(state,type=='flu_shot_coverage_2021',percentage,.desc=FALSE), color = type)) +
     ggtitle("Flu Coverage, Education, and Poverty Rates in the US") +
+    xlab("Percentage (normalized)")+
     ylab("") +
     theme_linedraw()+
   scale_color_colorblind(limits = c("flu_shot_coverage_2021", "high_school_education_ratio","household_poverty_rate"), 
@@ -265,7 +266,7 @@ g<-ggplot(new_cases, aes(submission_date, new_covid_case)) +
   geom_smooth(method = "loess", span = .05, se = FALSE)+
   scale_x_date(limits = c(as.Date("2018-01-01"),as.Date("2021-12-01")))+
   scale_y_continuous(labels = scales::label_number_si())+
-  labs(y="Count", title="Nationalwide New Covid Cases")+
+  labs(y="Count", title="Nationwide New Covid Cases, 2018-2021")+
   scale_color_colorblind()
   
 coverage_rate <- rename(us_by_year, estimation='Estimate....',record_date='ym')
@@ -274,12 +275,6 @@ coverage_rate$difference_with_previous_month[coverage_rate$difference_with_previ
 coverage_rate$record_date <- as.Date(coverage_rate$record_date)
 
 
-# f<-ggplot(coverage_rate, aes(record_date, difference_with_previous_month)) + 
-#   geom_smooth(method = "loess", span = .1, se = FALSE)+
-#   scale_x_date(limits = c(as.Date("2018-01-01"),as.Date("2021-12-01")))+
-#   labs(y="Percentage increase", title="Increase in Nationalwide Flu Vax Coverage Compared to Previous Months (%)")+
-#   scale_color_colorblind()
-
 
 coverage_rate$record_date <- as.Date(coverage_rate$record_date)
 
@@ -287,7 +282,7 @@ coverage_rate$record_date <- as.Date(coverage_rate$record_date)
 h<-ggplot(coverage_rate, aes(record_date, estimation)) + 
   geom_smooth(method = "loess", span = .1, se = FALSE)+
   scale_x_date(limits = c(as.Date("2018-01-01"),as.Date("2021-12-01")))+
-  labs(y="Coverage Rate", title = "Nationalwide Flu Vaccination Coverage Rate (%)")+
+  labs(y="Coverage Rate\n [%]", title = "Nationwide Flu Vaccination Coverage Rate, 2018-2021")+
   scale_color_colorblind()
 
 plot_grid(g,h, nrow=2,align = "v")
