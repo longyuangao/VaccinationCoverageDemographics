@@ -34,11 +34,11 @@ All of these three datasets are in chr form, so we have to spend time on transfo
 ### COVID-19 Case Dataset
 For COVID-19 case data, I again downloaded it from the CDC, as documented above. The dataset starts from 2020 and ends in 2022, which overlapps the flu shots data in years 2020 and 2021, given us the opportunity to visualize some trends in COVID cases and flu shots in the same time scale. The data is collected by local reports. The dataset is availabe for downloading online.
 
-Variables: >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>MISSING<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+Variables: submission date, state, total number of cases, Total probable cases, total confirmed cases, number of new cases, number of new probable cases, total number of deaths, total number of confirmed deaths
 
-Number of Records:
+Number of Records: about 60.1k.
 
-Problems:
+Problems: There are many variables we don’t need in this project. So, we have to select related columns before we do analysis. And many rows have 0 and NAs. We should take this into consideration during analysis.
 
 ## Data Cleaning and Transformation
 
