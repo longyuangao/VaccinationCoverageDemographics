@@ -68,7 +68,9 @@ After performing the above transformations, we combined the derived and some raw
 + household wealth rate
 + influenza vaccine coverage rate
 
-The reason for doing this is that the original datasets are too cumbersome for us to work with. 
+The reason for doing this is that the original datasets are too cumbersome for us to work with.
+
+A second similar dataset, "demo_df_d3", was used for the interactive component of our project. This data frame is identical to "demo_df", with an additional region column to categorize states by their region in the United States (West, South, Northeast, Midwest). These regions were made by the US Census Bureau and are found [here](https://github.com/cphalpert/census-regions/blob/master/us%20census%20bureau%20regions%20and%20divisions.csv).
 
 ### us_by_year, an Enhanced Dataframe
 This data frame is extracted from the flu shot dataset. In this data frame, we only keep the records for nationwide flu coverage for each month (2009 to 2021) and only records that are related to seasonal influenza, since H1N1 vaccines are only provided in earlier years. We also only care about the age metric, which should be ">6" months which includes all eligible individuals. Again, the reason we extract this specific data frame is to eliminate unnecessary entries for easier plotting, while keeping the original data frame the same in case we need to gather other data from it.
