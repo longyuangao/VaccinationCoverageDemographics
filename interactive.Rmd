@@ -8,5 +8,28 @@ knitr::include_url("https://vizhub.com/etevanss/840ed2d1de264a37b17e0ee991b106aa
 
 [Click Here To See Vizualization](https://vizhub.com/etevanss/840ed2d1de264a37b17e0ee991b106aa)
 
-## Takeaways
+## Summary and Takeaways
 
+We chose to use D3 to create an interactive scatter plot, observing the relationship
+between the flu shot coverage rate in 2021 and proportion of high school educated 
+individuals. As mentioned in the previous section, these two variables showed a 
+particularly strong correlation with one another. By visualizing these on a
+scatterplot, we can see how all 50 states plus D.C. compare to one another, and 
+coloring by region emphasizes geographic trends.
+
+There are two interactive components to this graph. Upon hovering over a given 
+point, that point's region will be highlighted across the graph, so the viewer
+can see how states within the same region match up across these variables.
+
+The second interactive component allows for deeper data analysis; upon clicking a 
+given point, the name of that point's state will print next to the point. This 
+allows the viewer to identify outliers or specific points of interest with ease.
+
+The highlighting feature of this graphic gives us the strongest visualization to
+emphasize the geographic clustering of variables. The scatterplot points indicate
+a general upward, positive trend. The South region occupies many of the points with 
+lower high school education rates and lower flu shot coverage rates, whereas the 
+Northeast region occupies many of the higher education and coverage rate points. 
+Although we identified similar trends when exploring our static plots in the 
+previous section, this D3 graphic was critical in solidifying our arguments and 
+conclusions.
