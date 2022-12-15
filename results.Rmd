@@ -44,7 +44,7 @@ Another explanation for this pattern could be patterns of political history. Sou
 
 ## Flu Vaccination Coverage Time Series Patterns
 
-Next, we performed a time series analysis on nationwide flu vaccination coverage from 2009 to 2022 using the clean us_by_year data mentioned in the data section. Notice that the flu vaccination coverage dataset gives the cumulative flu shot coverage from last July or August. For example, the coverage rate in 2021-03 is the overall coverage rate from 2020-07 to 2021-03. Also notice that the content of seasonal influenza changes every year, so every year there is a sudden drop in coverage rate (probably in June). The red line in plot A below shows the highest coverage rate of that year.
+Next, we performed a time series analysis on nationwide flu vaccination coverage from 2009 to 2022 using the clean us_by_year data mentioned in the data section. Notice that the flu vaccination coverage dataset gives the cumulative flu shot coverage from last July or August. For example, the coverage rate in March 2021 is the overall coverage rate from July 2020 to March 2021. Also notice that the content of seasonal influenza changes every year, so every year there is a sudden drop in coverage rate (probably in June). We presume the lack of June data indicates a "reset" of the vaccine during the summer, where the new vaccine is developed for the upcoming winter's flu strain. The red line in Figure A below shows the highest coverage rate of that year.
 
 ```{r}
 library(cowplot)
@@ -78,7 +78,7 @@ cowplot::plot_grid(
 
 ```
 
-Based on the above two plots, one can observe that the overall trend of nationwide flu vaccination coverage rate is increasing (red line, which represents the overall coverage rate of that year), from about 42% in 2009 to about 52% in 2021. Notice there is a conspicuous drop in 2017, which corresponds to a [report](https://www.cidrap.umn.edu/influenza-general/review-severe-2017-18-flu-season-shows-drop-vaccination) by the University of Minnesota. And after 2017, we notice a more or less remarkable increase in flu vaccination rate. We will zoom into the 2018-2022 range in later sections to find its correlations with the COVID-19 pandemic. 
+Based on the above two plots, one can observe that the overall trend of nationwide flu vaccination coverage rate is increasing (the red line follows the overall coverage rate of each year), from about 42% in 2009 to about 52% in 2021. Notice there is a conspicuous drop in 2017, which could be explained by a [report](https://www.cidrap.umn.edu/influenza-general/review-severe-2017-18-flu-season-shows-drop-vaccination) by the University of Minnesota. And after 2017, we notice a more or less remarkable increase in flu vaccination rate. We will zoom into the 2018-2022 range in later sections to find its correlations with the COVID-19 pandemic. 
 
 Speaking of the patterns for each year, from July or August the coverage rate quickly increases (concave up), and then slowly increases (concave down) from about December to April of the next year, which corresponds to our commonsense: those who want to take flu shots will do it as soon as the new flu shot releases, and fewer people will take flu shots before a new type of flu shot will come out in May or June.
 
