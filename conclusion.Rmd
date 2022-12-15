@@ -1,2 +1,17 @@
 # Conclusion
 
+In this project, we used data from CDC and Census.gov to analyze the relationship between demographical information and flu vaccination coverage in the United States, and we also provided some insights into the influence of the COVID pandemic on flu vaccine coverage. 
+
+We started with analyzing geographical patterns of flu vaccination coverage in 2021, which is the latest data we have. We drew a choropleth and found that the areas with high vaccine coverage are mainly in the Midwest, Northeast, and Mid-Atlantic regions of the United States, which may be caused by climate variations between regions.
+
+Then we analyzed the time series data considering the nationwide flu vaccination coverage rate from 2009 to 2022, along with some chosen racial groups or age groups. We found that the general pattern of flu vaccination coverage is increasing with an exception in 2017. We also found there are certain patterns associated with racial groups and age groups, such as that children have the largest vaccination coverage, and that white racial group has the largest vaccination coverage.
+
+Next, we compared the 2021 flu vaccination coverage data with more state demographical information like income, population composition, and education attainment. From here we found a very important factor that is highly correlated to flu coverage rate, which is the high school degree attainment rate. We did more visualizations based on our key findings.
+
+Last but not least, we plotted the flu vaccination coverage data with COVID-19 cases data and found nearly correlation between them, which is a little bit surprising to us because initially we thought the pandemic can potentially increase the flu vaccination rate due to mandates. 
+
+Admittedly, there are limitations to our project. First, there are data source limitations. For example, in doing the age group analysis, we should make the age bins more or less equal, but the source does not allow us to do this. Second, there are project size limitations. We can add more features in multidimensional analysis (biplots), but even if we included only 3 datasets for that part, it exceeds the recommended datasets amount (about 2, as we are suggested to draw 2 plots for missing value analysis).
+
+We also learned a lot about data visualization process from this project. Obviously, we consolidated our coding abilities in R. We also consolidated our sense of what is a "good" graph for a reader, like what color theme we should use, or what order of variables we should adopt. In a more general sense, we became more careful in examining datasets and more experienced in transforming a raw dataset into a clean dataset for plotting. For example, in the beginning, we did not figure out what the "Dimension" means in the flu vaccination coverage dataset from the CDC means, so we did not know that the dataset actually includes racial/age categories until some of the group members point out. 
+
+In the future, we will probably spend more time finding good data sources that suit our needs well, and we will definitely read the column descriptions before working on data cleaning and transformation. We will also try to combine more possible datasets in multidimensional analysis, if possible.
