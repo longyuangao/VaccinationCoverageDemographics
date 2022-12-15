@@ -66,6 +66,7 @@ After performing the above transformations, we combined the derived and some raw
 + mean household income
 + household poverty rate
 + household wealth rate
++ influenza vaccine coverage rate
 
 The reason for doing this is that the original datasets are too cumbersome for us to work with. 
 
