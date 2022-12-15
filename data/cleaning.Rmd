@@ -21,10 +21,10 @@ library(lubridate)
 
 ```{r}
 #READ DATA
-flu <- read.csv("data/raw/flu_vax_coverage.csv")
-education <- read.csv("data/raw/education.csv")
-pop <- read.csv("data/raw/population.csv")
-income <- read.csv("data/raw/income.csv")
+flu <- read.csv("./raw/flu_vax_coverage.csv")
+education <- read.csv("./raw/education.csv")
+pop <- read.csv("./raw/population.csv")
+income <- read.csv("./raw/income.csv")
 ```
 
 ## Data Transformation:
@@ -45,7 +45,7 @@ Added columns: ym: date of the observation, in yyyy-mm-01 format (day doesn't ma
 flu$ym <- as.Date(paste(stringi::stri_sub(flu$`Season.Survey.Year`, to = 4),"-", flu$Month, "-1", sep = ""))
 flu$`Estimate....` <- as.numeric(flu$`Estimate....`) #NA's!
 
-write.csv(flu, "./data/clean/flu.csv", row.names = FALSE)
+write.csv(flu, "./clean/flu.csv", row.names = FALSE)
 ```
 
 ### Transform education attainment data by state:
@@ -97,13 +97,13 @@ pop <- mutate_all(pop[str_detect(colnames(pop),"Total..Estimate")],
 rownames(pop)<- as.list(lapply(str_split(rownames(pop),"\\.\\."),
                                      function(x){str_replace_all(x[1],"\\."," ")})) #Transform state names
 colnames(pop)<- rowname
-demo_df$pop_over_18<- pop$`        18 years and over`
+demo_df$pop_over_18 <- pop$`        18 years and over`
 ```
 
 Calculate the ratio:
 
 ```{r}
-demo_df<-demo_df %>% mutate(high_school_education_ratio=high_school_higher_pop/pop_over_18)
+demo_df<-demo_df %>%     mutate(high_school_education_ratio=high_school_higher_pop/pop_over_18)
 ```
 
 We also consider the ratio of elderly people (>= 65 years old) and children (<= 14 years old) in the population:
@@ -182,7 +182,7 @@ Since we are missing some values for Puerto Rico, you can consider only include 
 demo_df<-head(demo_df,51)
 demo_df <- tibble::rownames_to_column(demo_df, "state")
 
-write.csv(demo_df, "./data/clean/demo_df.csv", row.names = FALSE)
+write.csv(demo_df, "./clean/demo_df.csv", row.names = FALSE)
 ```
 
 
@@ -201,7 +201,7 @@ us_by_year <- us_by_year%>% filter(Vaccine=="Seasonal Influenza", #H1N1 vaccines
                      Dimension.Type =="Age",
                      Dimension=="≥6 Months") %>% arrange(ym)
 
-write.csv(us_by_year, "data/clean/us_by_year.csv", row.names=FALSE)
+write.csv(us_by_year, "./clean/us_by_year.csv", row.names=FALSE)
 
 ```
 
@@ -215,7 +215,7 @@ test <-
     Dimension.Type =="Age",
     Dimension=="≥6 Months") %>% arrange(ym)
 
-write.csv(test,"data/clean/coverage_by_state.csv")
+write.csv(test,"./clean/coverage_by_state.csv")
 
 
 ```
