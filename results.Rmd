@@ -334,12 +334,6 @@ plot_grid(g,h, nrow=2,align = "v")
 
 We observed that the vaccine coverage rate changes every year as a cycle. Each cycle records the cumulative data from June of each year to June of next year. We can see in Figure 1 that the number of people infected has increased in waves since 2020. However, this has no significant impact on the flu vaccine coverage which means the changes in data after 2020 are basically the same as before 2020. Therefore, we believe that the occurrence of COVID does not affect people's choice of whether to vaccinate against flu. We would like to find more data sources relating to COVID to explore how else the pandemic might have affected the choice and decisions of Americans.
 
-## References 
-
-https://www.cidrap.umn.edu/influenza-general/review-severe-2017-18-flu-season-shows-drop-vaccination
-
-https://www.mayoclinic.org/healthy-lifestyle/infant-and-toddler-health/expert-answers/flu-shots/faq-20058448
-
 
 
 

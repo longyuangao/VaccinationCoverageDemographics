@@ -28,7 +28,6 @@ races-and-age-groups-a-time-series-analysis
 socioeconomic-data-finding-important-factors-with-biplots
 cleveland-dotplot-of-most-important-factors
 covid-cases-vs.-flu-vaccination-coverage-time-series-comparison
-references
 interactive-component
 vizhub
 summary-and-takeaways
