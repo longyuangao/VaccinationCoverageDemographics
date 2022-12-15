@@ -6,7 +6,7 @@ data
 sources
 flu-vaccine-coverage-dataset
 demographic-datasets
-covid-19-case-dataset
+covid-19-cases-dataset
 data-cleaning-and-transformation
 flu-vaccine-coverage-dataset-1
 demographic-datasets-1
@@ -18,7 +18,7 @@ demographic-datasets-2
 population-dataset
 education-attaiment-dataset
 household-income-dataset
-covid-19-cases-dataset
+covid-19-cases-dataset-1
 results
 geographical-patterns
 flu-vaccination-coverage-time-series-patterns
