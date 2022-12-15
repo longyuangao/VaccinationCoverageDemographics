@@ -39,6 +39,7 @@ states$layers[[layer_no]] <- NULL
 states
 
 ```
+
 We noticed that the areas with high vaccine coverage are mainly in the Midwest, Northeast and Mid-Atlantic regions of the United States. According to a CDC report, flu season usually occurs in the fall and winter in the United States. While influenza viruses spread year-round, most of the time flu activity peaks are between December and February. Thus, low temperatures could be accompanied by high rates of flu infection and thus vaccine coverage rate. Looking at the US map above, Midwest states such as Colorado are located near the Rocky Mountains, with high altitude and low temperatures. The north has a high latitude and a lower temperature than the south. Due to factors such as ocean current and monsoon, the climate in the east is quite different from that in the west coast, and the temperature is relatively lower. Therefore, these regions have relatively higher coverage of flu vaccine. Thus, it appears that the distribution of flu vaccine coverage does have a geographical pattern.
 
 Another explanation for this pattern could be patterns of political history. Southern states, leaning more right on the political spectrum, may be less inclined to get a flu shot, whereas Northeast states that tend to vote more liberally would do otherwise, which supports the distribution of coverage we see. We will continue to explore these geographic trends as our analysis continues.
