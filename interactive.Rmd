@@ -33,3 +33,11 @@ Northeast region occupies many of the higher education and coverage rate points.
 Although we identified similar trends when exploring our static plots in the 
 previous section, this D3 graphic was critical in solidifying our arguments and 
 conclusions.
+
+Another feature we would like to add to this graphic is an option for the user to 
+select which variables are displayed on the scatterplot. Using a dropdown menu, 
+users can view any pair of demographic, socioeconomic, or coverage variables with
+auto-adjusting axes. Another graphic that would pair well with this is an interactive
+choropleth map that could display these variables with a tooltip. We tried this 
+approach but struggled when it came to creating buttons to choose which variable
+is displayed on the choropleth.
