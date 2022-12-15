@@ -112,6 +112,7 @@ We also consider the ratio of elderly people (>= 65 years old) and children (<= 
 pop<- pop %>% mutate(children_pop = pop$`        Under 5 years`+pop$`        5 to 9 years` +pop$`        10 to 14 years`,
                      children_ratio = children_pop/`Total population`,
                      elder_ratio = pop$`        65 years and over`/`Total population`)
+
 demo_df$tot_pop<- pop$`Total population`
 demo_df$children_pop <- pop$children_pop
 demo_df$children_ratio<- pop$children_ratio
@@ -204,11 +205,6 @@ write.csv(us_by_year, "data/clean/us_by_year.csv", row.names=FALSE)
 
 ```
 
-
-
-
-
-
 ```{r}
 #state based flu data
 
@@ -224,12 +220,4 @@ write.csv(test,"data/clean/coverage_by_state.csv")
 
 ```
 
-
-```{r}
-
-international <- read.csv("data/raw/international_rates.csv")
-
-
-
-```
 

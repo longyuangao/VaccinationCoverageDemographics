@@ -19,6 +19,7 @@ library(dplyr)
 library(tidyverse)
 library(choroplethr)
 
+#This df will store 2021 coverage data
 choropleth_df <-
   demo_df %>%
     select(c(state, flu_shot_coverage_2021)) %>%
@@ -27,6 +28,7 @@ choropleth_df <-
     transmute(region = tolower(`state`),
            value =  flu_shot_coverage_2021)
 
+#Using choroplethr package
 states <- state_choropleth(choropleth_df,
                  title = "Flu Vaccine Coverage, 2021",
                  legend = "Percent Covered")
@@ -49,9 +51,10 @@ Next, we performed a time series analysis on nationwide flu vaccination coverage
 ```{r}
 library(cowplot)
 
-#lm <- lm(Estimate.... ~ as.Date(ym), data=us_by_year)
-
+#Filter out the maximum coverage rate of each year
 maximum <- us_by_year %>% filter(str_detect(ym, ".*-05-01"))
+
+#Plot A: plot coverage time series, with a red line indicating the max of each year
 p1<- us_by_year %>%
   ggplot(aes(as.Date(ym), Estimate....)) +
     geom_line(group = 1) +
@@ -60,8 +63,9 @@ p1<- us_by_year %>%
     ylab("Percent Coverage\n [%]") +
     geom_line(data=maximum, aes(x=as.Date(maximum$ym), y=maximum$Estimate...., ), color ="red")+
     ggtitle("Flu Shot Coverage, 2009 to 2022")+
-  scale_color_colorblind()  
+    scale_color_colorblind()  
 
+#A smooth version of plot A for better visualization
 p2 <- us_by_year %>%
   ggplot(aes(as.Date(ym), Estimate....)) +
     geom_smooth(group = 1) +
@@ -69,8 +73,9 @@ p2 <- us_by_year %>%
     xlab("") + 
     ylab("Percent Coverage\n [%]") +
     ggtitle("Flu Shot Coverage, 2009 to 2022")+
-  scale_color_colorblind()  
+    scale_color_colorblind()  
 
+#Arrange plots
 cowplot::plot_grid(
   p1, p2,
   labels = "AUTO", ncol = 1
@@ -92,20 +97,29 @@ We will look at the 2021 data (the latest flu data we have). We plot flu vaccina
 
 ```{r}
 library(forcats)
+
 flu <- read.csv("./data/clean/flu.csv")
+
+#Filter out data that is of dimension "race"
 flu_race<- flu %>% filter(Dimension.Type == "Race/Ethnicity (age ≥6 months only)",
                           Geography.Type == "HHS Regions/National",
                           Geography == "United States",
-                          str_detect(ym, "2021-05-01")) %>% mutate(ym = as.Date(ym))%>% arrange(ym)
+                          str_detect(ym, "2021-05-01")) %>% 
+                    mutate(ym = as.Date(ym))%>% 
+                    arrange(ym)
+
+#Reorder categories based on coverage rate
 flu_race$Dimension <- fct_reorder(flu_race$Dimension, flu_race$Estimate....)
+
+#Store the plot
 race<-ggplot(data=flu_race)+
   geom_bar(aes(x=	flu_race$Dimension, y=flu_race$Estimate....),stat="identity", fill="skyblue1",alpha=0.7)+
   labs(x="Race", y="Flu Vaccination Coverage Rate 2021 [%]", title="Flu Vaccination Coverage Rate 2021 by Race Group")+
   coord_flip()+
   scale_color_colorblind()  
 
+#Filter out data that is of dimension "age"
 flu_age<- flu %>% filter(Dimension.Type == "Age",
-                          #!str_detect(Dimension, "≥6"),
                           Geography.Type == "HHS Regions/National",
                           Geography == "United States",
                           str_detect(ym, "2021-05-01")) %>%
@@ -114,12 +128,21 @@ flu_age<- flu %>% filter(Dimension.Type == "Age",
                                           "13-17 Years",
                                           "18-64 Years",
                                           "≥6 Months")) %>%
-                  mutate(ym = as.Date(ym))%>% arrange(ym)
+                  mutate(ym = as.Date(ym))%>% 
+                  arrange(ym)
 
+#Reorder categories based on coverage rate
 flu_age$Dimension <- fct_reorder(flu_age$Dimension, flu_age$Estimate....)
+
+#Generate barplots
 age<-ggplot(data=flu_age)+
-  geom_bar(aes(x=	flu_age$Dimension, y=flu_age$Estimate....),stat="identity", fill="skyblue1",alpha=0.7)+
-  labs(x="Age Groups", y="Flu Vaccination Coverage Rate 2021 [%]", title="Flu Vaccination Coverage Rate 2021 by Age Group")+
+  geom_bar(aes(x=	flu_age$Dimension, y=flu_age$Estimate....),
+           stat="identity", 
+           fill="skyblue1",
+           alpha=0.7)+
+  labs(x="Age Groups", 
+       y="Flu Vaccination Coverage Rate 2021 [%]", 
+       title="Flu Vaccination Coverage Rate 2021 by Age Group")+
   coord_flip()+
   scale_color_colorblind()  
 
@@ -136,17 +159,24 @@ If we use >=6 months as a baseline group, we can see that the older the age grou
 We performed a time series analysis from 2009 to 2021 in race and age groups to see if there exist abnomalities similar to what we see in Simpson's Paradox.
 
 ```{r}
-flu_race_ts <- flu %>% filter(Vaccine == "Seasonal Influenza",
+#Filter out data  of dimension race, from 2009 to 2021
+flu_race_ts <- flu %>% filter(Vaccine == "Seasonal Influenza", #This is the most common type of vaccines in data
                           Dimension.Type == "Race/Ethnicity (age ≥6 months only)",
                           Geography.Type == "HHS Regions/National",
-                          !Dimension %in% c("≥6 months Asian, Non-Hispanic","≥6 months American Indian or Alaska Native, Non-Hispanic"),
+                          !Dimension %in% c("≥6 months Asian, Non-Hispanic",
+                                            "≥6 months American Indian or Alaska Native, Non-Hispanic"),
                           Geography == "United States",
-                          str_detect(ym, ".*-05-01")) %>% mutate(ym = as.Date(ym))%>% arrange(ym)
+                          str_detect(ym, ".*-05-01")) %>% 
+                          mutate(ym = as.Date(ym))%>% 
+                          arrange(ym)
 
+#Make plot, facet on race
 ggplot(data=flu_race_ts)+
   geom_line(aes(x=ym,y=flu_race_ts$Estimate....))+
   facet_wrap(.~Dimension)+
-  labs(x="Year", y="Flu Vaccination Coverage Rate\n [%]",title = "Flu Vaccination Coverage Rate by Race Group, 2009-2021")+
+  labs(x="Year", 
+       y="Flu Vaccination Coverage Rate\n [%]",
+       title = "Flu Vaccination Coverage Rate by Race Group, 2009-2021")+
   scale_y_continuous(limits = c(0,59))+
   scale_color_colorblind()  
 
@@ -159,28 +189,33 @@ Notice that for the  White, Non-Hispanic group, the rebound (increase) after 201
 
 
 ```{r}
-
+#Filter out data  of dimension age, from 2009 to 2021
 flu_age_ts <- flu %>% filter(Vaccine == "Seasonal Influenza",
                           Dimension.Type == "Age",
-                          #!str_detect(Dimension, "≥6"),
                           Geography.Type == "HHS Regions/National",
                           Geography == "United States",
                           str_detect(ym, ".*-05-01")) %>% 
-                        filter(Dimension %in% c("6 Months - 4 Years",
+                          filter(Dimension %in% c("6 Months - 4 Years",
                                           "5-12 Years",
                                           "13-17 Years",
                                           "18-64 Years",
-                                          "≥6 Months")) %>%mutate(ym = as.Date(ym))%>% arrange(ym)
+                                          "≥6 Months")) %>%
+                          mutate(ym = as.Date(ym))%>% 
+                          arrange(ym)
+
+#Sort categoris based on age order. The last category serves as a baseline.
 flu_age_ts$Dimension <- factor(flu_age_ts$Dimension, levels = c("6 Months - 4 Years",
                                           "5-12 Years",
                                           "13-17 Years",
                                           "18-64 Years",
                                           "≥6 Months"))
+
 ggplot(data=flu_age_ts)+
   geom_line(aes(x=ym,y=flu_age_ts$Estimate....))+
   facet_wrap(.~Dimension)+
-  labs(x="Year", y="Flu Vaccination Coverage Rate\n[%]
-       ",title = "Flu Vaccination Coverage Rate by Age Group, 2009-2021")+
+  labs(x="Year", 
+       y="Flu Vaccination Coverage Rate\n[%]",
+       title = "Flu Vaccination Coverage Rate by Age Group, 2009-2021")+
   scale_y_continuous(limits = c(0,80))+
   scale_color_colorblind()  
 
@@ -196,15 +231,16 @@ Next, we drew a biplot based on selected features from demo_df, demographic info
 
 
 ```{r fig1, fig.height = 10, fig.width = 10}
-
 remotes::install_github("jtr13/redav")
 library(redav)
 
+#Select features for PCA
 demo_df_biplot <-
   demo_df %>%
     select(c(state, household_poverty_rate, flu_shot_coverage_2021, household_wealth_rate, median_household_income, high_school_education_ratio, elder_ratio, children_ratio)) %>%
     mutate(across(where(is.numeric), ~round((.x-mean(.x))/sd(.x), 2)))
 
+#Do PCA
 pca <- prcomp(demo_df_biplot[,2:4], scale. = TRUE)
 
 draw_biplot(demo_df_biplot)
@@ -226,20 +262,31 @@ We used "demo_df" to plot the two factors mentioned above, with data normalized 
 
 ```{r}
 
+#Filter out the features we want for plotting and feed directly into ggplot
 demo_df %>%
-  select(c(state, flu_shot_coverage_2021, high_school_education_ratio, household_poverty_rate)) %>%
-  mutate(across(where(is.numeric), ~round((.x-mean(.x))/sd(.x), 2))) %>%
-  gather(key='type',value='percentage',flu_shot_coverage_2021, high_school_education_ratio, household_poverty_rate) %>%
+  select(c(state, flu_shot_coverage_2021, high_school_education_ratio, household_poverty_rate)) %>% #Select features
+  mutate(across(where(is.numeric), ~round((.x-mean(.x))/sd(.x), 2))) %>% #Normalization
+  gather(key='type',
+         value='percentage',
+         flu_shot_coverage_2021, 
+         high_school_education_ratio, 
+         household_poverty_rate) %>%
   ggplot() +
-    geom_point(aes(x=percentage, y=fct_reorder2(state,type=='flu_shot_coverage_2021',percentage,.desc=FALSE), color = type)) +
+    geom_point(aes(x=percentage, 
+                   y=fct_reorder2(state,
+                                  type=='flu_shot_coverage_2021',
+                                  percentage,
+                                  .desc=FALSE), #Reordering state based on flu coverage rate
+                   color = type)) +
     ggtitle("Flu Coverage, Education, and Poverty Rates in the US") +
     xlab("Percentage (normalized)")+
     ylab("") +
     theme_linedraw()+
-  scale_color_colorblind(limits = c("flu_shot_coverage_2021", "high_school_education_ratio","household_poverty_rate"), 
-                         labels=c("2021 flu vaccination coverage rate","high school education attainment rate","household poverty rates"))
-
-
+    scale_color_colorblind(limits = c("flu_shot_coverage_2021", 
+                                      "high_school_education_ratio","household_poverty_rate"), 
+                           labels=c("2021 flu vaccination coverage rate",
+                                    "high school education attainment rate",
+                                    "household poverty rates"))
 
 ```
 
@@ -252,9 +299,9 @@ A secondary aim of our research was to compare new COVID cases with flu vaccinat
 ```{r}
 covid2 <- read.csv("data/raw/United_States_COVID-19_Cases.csv")
 
-covid2 <- covid2[-which(covid2$tot_cases == 0 |is.na(covid2$tot_cases)),]
-covid2 <- covid2 %>% dplyr::select(submission_date, state, new_case)
-covid_time2 <- group_by(covid2,submission_date)
+covid2 <- covid2[-which(covid2$tot_cases == 0 |is.na(covid2$tot_cases)),] #Cleaning data
+covid2 <- covid2 %>% dplyr::select(submission_date, state, new_case) #Select wanted features
+covid_time2 <- group_by(covid2,submission_date) #Aggregate by report date
 new_cases <- summarize(covid_time2, sum(new_case))
 new_cases <- rename(new_cases, new_covid_case='sum(new_case)')
 new_cases$submission_date <- as.Date(new_cases$submission_date, format = "%m/%d/%Y")
@@ -262,31 +309,38 @@ new_cases <- arrange(new_cases,submission_date)
 
 library(scales)
 
+#Plot daily new case by date
 g<-ggplot(new_cases, aes(submission_date, new_covid_case)) + 
-  geom_smooth(method = "loess", span = .05, se = FALSE)+
+  geom_smooth(method = "loess", span = .05, se = FALSE)+ #Use smooth for better visualization
   scale_x_date(limits = c(as.Date("2018-01-01"),as.Date("2021-12-01")))+
-  scale_y_continuous(labels = scales::label_number_si())+
-  labs(y="Count", title="Nationwide New Covid Cases, 2018-2021")+
+  scale_y_continuous(labels = scales::label_number_si())+ #Use "K"'s for readability
+  labs(y="Count",
+       title="Nationwide New Covid Cases, 2018-2021")+
   scale_color_colorblind()
-  
+
+#renaming
 coverage_rate <- rename(us_by_year, estimation='Estimate....',record_date='ym')
-coverage_rate$difference_with_previous_month <- append(NA,diff(coverage_rate$estimation))
-coverage_rate$difference_with_previous_month[coverage_rate$difference_with_previous_month<0]<-0
-coverage_rate$record_date <- as.Date(coverage_rate$record_date)
-
-
-
 coverage_rate$record_date <- as.Date(coverage_rate$record_date)
 
 
 h<-ggplot(coverage_rate, aes(record_date, estimation)) + 
-  geom_smooth(method = "loess", span = .1, se = FALSE)+
+  geom_smooth(method = "loess", span = .1, se = FALSE)+ 
   scale_x_date(limits = c(as.Date("2018-01-01"),as.Date("2021-12-01")))+
-  labs(y="Coverage Rate\n [%]", title = "Nationwide Flu Vaccination Coverage Rate, 2018-2021")+
+  labs(y="Coverage Rate\n [%]",
+       title = "Nationwide Flu Vaccination Coverage Rate, 2018-2021")+
   scale_color_colorblind()
 
 plot_grid(g,h, nrow=2,align = "v")
 ```
 
 We observed that the vaccine coverage rate changes every year as a cycle. Each cycle records the cumulative data from June of each year to June of next year. We can see in Figure 1 that the number of people infected has increased in waves since 2020. However, this has no significant impact on the flu vaccine coverage which means the changes in data after 2020 are basically the same as before 2020. Therefore, we believe that the occurrence of COVID does not affect people's choice of whether to vaccinate against flu. We would like to find more data sources relating to COVID to explore how else the pandemic might have affected the choice and decisions of Americans.
+
+## References 
+
+https://www.cidrap.umn.edu/influenza-general/review-severe-2017-18-flu-season-shows-drop-vaccination
+
+https://www.mayoclinic.org/healthy-lifestyle/infant-and-toddler-health/expert-answers/flu-shots/faq-20058448
+
+
+
 
