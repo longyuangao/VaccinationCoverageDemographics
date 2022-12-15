@@ -11,6 +11,7 @@
 	<h1>D3 Component - Interactive Scatterplot</h1>
 	<p>Instructions: Hover over a point to highlight its regional group. Click a point to display the state it
 		represents. Refresh the page to clear all state labels.</p>
+	<h3>Flu Shot Coverage Rate vs High School Education Ratio</h3>
 	<div id="scatterplot"></div>
 
 	<script>
@@ -109,8 +110,8 @@
 				.on("click", function (d, i) {
 					tooltip.text(i["state"])
 						.style("visibility", "visible")
-						.attr("x", (d.clientX - 100) + "px")
-						.attr("y", (d.clientY - 175) + "px")
+						.attr("x", (d.pageX - 100) + "px")
+						.attr("y", (d.pageY - 225) + "px")
 				})
 
 			// x axis label
