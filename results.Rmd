@@ -13,6 +13,7 @@ library(ggthemes)
 ## Geographical Patterns
 
 Firstly, we created a choropleth map using color to indicate the value of flu vaccine coverage rate within United States by state for 2021 and check if there exist some geographical patterns for the distribution of flu vaccine coverage rate.
+
 ```{r}
 library(dplyr)
 library(tidyverse)
@@ -40,6 +41,8 @@ states
 We noticed that the areas with high vaccine coverage are mainly in the Midwest, North and East of the United States. And according to CDC report, In the United States, flu season usually occurs in the fall and winter. While influenza viruses spread year-round, most of the time flu activity peaks are between December and February. So low temperatures should be accompanied by high rates of flu infection and vaccine coverage rate. Go back to the US map above, Midwest regions, such as Colorado, are located near the Rocky Mountains, with high altitude and low temperature. The north has a high latitude and a lower temperature than the south. Due to factors such as ocean current and monsoon, the climate in the east is quite different from that in the west coast, and the temperature is relatively lower. Therefore, these regions have relatively higher coverage of flu vaccine. Thus, it appears that the distribution of flu vaccine coverage does have a geographical pattern.
 
 ## Flu Vaccination Coverage Time Series Patterns
+
+Next, we do a time series analysis on nationalwide flu vaccination coverage from 2009 to 2022 using the clean us_by_year data mentioned in data section. Notice that the flu vaccination coverage dataset gives the cumulative flu shot coverage from last July or August. For example, the coverage rate in 2021-03 is the overall coverage rate from 2020-07 to 2021-03. Also notice that the content of seasonal influenza changes every year, so every year there is a sudden drop in coverage rate (probably in June). The red line in plot A below shows the highest coverage rate of that yea.
 
 ```{r}
 library(cowplot)
@@ -73,9 +76,17 @@ cowplot::plot_grid(
 
 ```
 
+Based on the above two plots, one can observe that the overall trend of nationalwide flu vaccination coverage rate is increasing (red line, which represents the overall coverage rate of that year), from about 42% in 2009 to about 52% in 2021. Notice there is a conspicuous drop in 2017, which correpsonds to a [report](https://www.cidrap.umn.edu/influenza-general/review-severe-2017-18-flu-season-shows-drop-vaccination) by University of Minnesota. And after 2017, we notice a more or less remarkable increse in flu vaccination rate. We will zoom into the 2018-2022 range in later sections to find its correlations with the COVID-19 pandemic. 
+
+Speaking of the patterns for each year, from July or August the coverage rate quickly increase (concave up), and then slowly increase  (concave down) from about December to April of next year, which corresponds to our commonsense: those who want to take flu shots will do it as soon as the new flu shot releases, and fewer people will take flu shots before a new type of flu shot will come out in May or June.
+
 ## Demographical Patterns
 
+Next we will relate flu vaccination coverage rates to demographical data.
+
 ### Races and Age Groups: 2021
+
+We will look at the 2021 data (the latest flu data we have). We plot flu vaccination coverage rates with respect to race groups and age groups.
 
 ```{r}
 library(forcats)
@@ -113,7 +124,15 @@ age<-ggplot(data=flu_age)+
 gridExtra::grid.arrange(race,age,nrow=2)
 ```
 
+For race groups, we see that for year 2021, white race group has the most flu vaccination coverage rate, reaching about 53%, with other races (unfortunately we cannot be more specific about which races it contains due to limitation of the dataset) being the second most covered group, also reaching more than 50%; the Hispanic race group is the second least covered group, with coverage rate about 44%; the Black race group is the least covered group, with coverage rate a little less than the Hispanic race group. This kind of patterns of flu coverage with respect to race groups may be intertwined with other socioeconomical phenomena, which we will not dig deeper into.
+
+Talking about age groups, if we use >= 6 months as a baseline group, we can see that the older the age group is, the less coverage rate that group gets. age groups with 13-17 years old and 18-64 years old are below the baseline coverage rates, and the coverage rates for 6 months- 4 years old and 5-12 years old groups are well above the baseline group coverage rate. We notice that children gets more flu vaccine coverage (reaching about 64%) than teenagers and adults, and that is probably due to the fact that children are more susceptible to seasonal influenza, as stated in this [article](https://www.mayoclinic.org/healthy-lifestyle/infant-and-toddler-health/expert-answers/flu-shots/faq-20058448), so they need flu vaccines to prevent complications. 
+
+
+
 ### Races and Age Groups: A Time Series Analysis
+
+We do a time series analysis from 2009 to 2021 in race and age groups to see if there is some abnomalities similar to what we see in Simpson's Paradox.
 
 ```{r}
 flu_race_ts <- flu %>% filter(Vaccine == "Seasonal Influenza",
@@ -126,11 +145,15 @@ flu_race_ts <- flu %>% filter(Vaccine == "Seasonal Influenza",
 ggplot(data=flu_race_ts)+
   geom_line(aes(x=ym,y=flu_race_ts$Estimate....))+
   facet_wrap(.~Dimension)+
-  labs(x="Year", y="Flu Vaccination Coverage Rate\n [%]",title = "Flu Vaccination Coverage Rate by Race, 2009-2021")+
+  labs(x="Year", y="Flu Vaccination Coverage Rate\n [%]",title = "Flu Vaccination Coverage Rate by Race, 2010-2021")+
+  scale_y_continuous(limits = c(0,59))+
   scale_color_colorblind()  
 
 
 ```
+We see that these race groups follow the same trend as the overall population, as we see in previous sections. We can observe that there are drops in flu vaccination coverage rate in year 2017 in all four race groups. 
+
+Notice that for White, Non-Hispanic group, the rebounce (increase) after 2017 is stronger than other race groups (the rebounce is about 13%, from ~42% in 2017 to ~55 in 2020). For Other or Multiple Races, the rebounce is not as strong as the white race group; for Hispanic and Black race group, the rebounce is even weaker; for Hispanic race group, we can hardly see a pronounced increase in coverage rate post-2017 as compared to pre-2017.
 
 ```{r}
 
@@ -154,12 +177,19 @@ ggplot(data=flu_age_ts)+
   geom_line(aes(x=ym,y=flu_age_ts$Estimate....))+
   facet_wrap(.~Dimension)+
   labs(x="Year", y="Flu Vaccination Coverage Rate\n[%]
-       ",title = "Flu Vaccination Coverage Rate by Age Group, 2009-2021")+
+       ",title = "Flu Vaccination Coverage Rate by Age Group, 2010-2021")+
+  scale_y_continuous(limits = c(0,80))+
   scale_color_colorblind()  
 
 ```
 
+The age groups time series pattern also follow the general pattern discussed before; moreover, it follows the 2021 age groups pattern: generally speaking, the older ages the group contains, the less the flu rate coverage rate across years.
+
+A pronounced point in these plots is that for 13-17 years group, the coverage rate is equal to or even lower than the 18-64 years group in 2010, but it increases in the following years and exceeds the coverage rate for 18-64 years group.
+
 ### Other Demographics Data: Sorting Out Important Factors Using Biplots
+
+Next, we draw a biplot based on selected features from demo_df, demographical information in 2021 introduced in the data section, to examine correlations between demographical features and flu vaccination coverage.
 
 ```{r fig1, fig.height = 10, fig.width = 10}
 
@@ -177,8 +207,16 @@ draw_biplot(demo_df_biplot)
 
 
 ```
+Angles between vectors in biplots tell us about correlations. From this biplot, we can observe that flu shot coverage in 2021 is mostly correlated to high school education attainment rate in states. Since household poverty rate forms a large angle with flu shot coverage rate, it is (relatively strongly) negatively correlated with flu shot coverage in 2021. Notice that child_ratio is also similarly negatively correlated with flu shot coverage, but we decided to experiment more on household poverty rate in next section because there are more states that lie near the household poverty rate axis.
+
+We can also observe state clusters in this graph: states like New Mexico, Alabama, and Kentucky lies at the negative flu shot coverage axis and positive household poverty rate axis, indicating that these states associated with high household poverty rate has less flu vaccination coverage; while for states like Colorado, New Jersey, and Hawaii lies at the positive axis of coverage and negative axis of household poverty rate, meaning these states have low poverty rate and high flu vaccinations coverage in 2021.
+
+In conclusion, we sort out two most important factors that are correlated, one positively (high school education attainment rate) and one negatively (household poverty rate), to flu vaccination coverage in 2021. Next, we will plot these two factors alongside with flu vaccination coverage in 2021 to better illustrate the pattern.
+
 
 ### Cleveland Dotplot of Most Important Factors
+
+Again we use demo_df to plot the two factors mentioned above, with data normalized for better visualization.
 
 ```{r}
 
@@ -186,16 +224,19 @@ demo_df %>%
   select(c(state, flu_shot_coverage_2021, high_school_education_ratio, household_poverty_rate)) %>%
   mutate(across(where(is.numeric), ~round((.x-mean(.x))/sd(.x), 2))) %>%
   gather(key='type',value='percentage',flu_shot_coverage_2021, high_school_education_ratio, household_poverty_rate) %>%
-  ggplot(aes(x=percentage, y=fct_reorder2(state,type=='household_poverty_rate',percentage,.desc=FALSE), color = type)) +
-    geom_point() +
+  ggplot() +
+    geom_point(aes(x=percentage, y=fct_reorder2(state,type=='flu_shot_coverage_2021',percentage,.desc=FALSE), color = type)) +
     ggtitle("Flu Coverage, Education, and Poverty Rates in the US") +
     ylab("") +
     theme_linedraw()+
-  scale_color_colorblind()
+  scale_color_colorblind(limits = c("flu_shot_coverage_2021", "high_school_education_ratio","household_poverty_rate"), 
+                         labels=c("2021 flu vaccination coverage rate","high school education attainment rate","household poverty rates"))
 
 
 
 ```
+
+As flu vaccination coverage rate increases, we see a decreasing pattern in household poverty rate, or the blue dots; we can also see an increasing patern in high school education attainment rate, or the orange dots. This confirms our conclusion made in the previous section. We will do our d3 interactive component based on this key finding.
 
 ## Time Series Comparison of Nationanlwide New COVID Cases with Flu Vaccination Coverage
 
