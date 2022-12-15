@@ -244,6 +244,7 @@ As flu vaccination coverage rate increases, we see a decreasing pattern in the h
 
 ## Time Series Comparison of Nationwide New COVID Cases with Flu Vaccination Coverage
 
+For aim 2, we created 2 graphs: First one is nationwide new covid cases time series plot from Jan 2020 to Dec 2021. Second one is nationwide flu vaccination coverage rate time series plot from Jan 2018 to Dec 2021. 
 ```{r}
 covid2 <- read.csv("data/raw/United_States_COVID-19_Cases.csv")
 
@@ -288,7 +289,7 @@ h<-ggplot(coverage_rate, aes(record_date, estimation)) +
 
 plot_grid(g,h, nrow=2,align = "v")
 ```
-
+We observed that the vaccine coverage rate changes every year as a cycle. Each cycle records the cumulative data from June of each year to June of next year. We can see in Figure 1 that the number of people infected has basically increased every day since 2020. However, this has no significant impact on the flu vaccine coverage, which means the data changes after 2020 are basically the same as before 2020. Therefore, we believe that the occurrence of Covid-19 does not affect people's choice of whether to vaccinate against flu.
 
 
 
