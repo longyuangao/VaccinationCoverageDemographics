@@ -45,32 +45,32 @@ Problems: There are many variables that are unnecessary for our analyses. Thus, 
 
 ### Flu Vaccine Coverage Dataset
 
-First, we extract the year of the record from the season column, since the number after year in that column is not the month; then we combine the year with month in Month column, convert it to Date class and store it in a new column called "ym". Also, we convert column Estimate, which is the estimated coverage rate, from chr to numeric. 
+First, we extracted the year of the record from the season column, since the number after year in that column is not the month. Then we combine the year with month in the month column, convert it to a date type and store it in a new column called "ym". Also, we convert the column Estimate (the estimated coverage rate) from character to numeric. 
 
 ### Demographic Datasets
 
-For these datasets, we transform them more or less in the same way: first, only keep columns (which contain data for each state) with estimated value for each state, and transpose the dataset so that each row contains the metrics for only one state. Then, change the row names to the exact name of that state, and convert the entries to numeric. For education, we add a column called "high_school_higher_pop" that represents the total population that counts the number of people that attained at least a high school or equivalent diploma. For population, we add 3 columns, "children_pop", which counts the number of people <=14, "children_ratio", ratio of children with respect to the total population, "elder_ratio", ratio of people >= 65 with respect to total population. For income, we only keep the income data for households, which is the majority, and we calculate the ratio of households who earn less than 14999 USD/year (stored in household_poverty_rate) or more than 150,000 USD/year (stored in household_wealth_rate) .
+For these datasets, we transform them more or less in the same way. First, we only kept columns (which contain data for each state) with estimated values for each state, and transpose the dataset so that each row contains the metrics for only one state. Then, we changed the row names to the exact name of that state and converted the entries to numeric types. For education, we add a column called "high_school_higher_pop" that represents the total population that counts the number of people that attained at least a high school diploma or equivalent education. For population, we add 3 columns, "children_pop", which counts the number of people 14 and under, "children_ratio", the ratio of children with respect to the total population, and "elder_ratio", the ratio of people 65 or older with respect to total population. For income, we only keep the income data for households (this is the majority of the data), and we calculate the ratio of households who earn less than 14,999 dollars/year (stored in household_poverty_rate) or more than 150,000 dollars/year (stored in household_wealth_rate).
 
 ### demo_df, an Enhanced Dataframe
-After doing above transformations, we combine the added and some inherent columns for the demographics dataset with the flu shot coverage data and form a more concise dataframe called demo_df, and we do further feature engineering in this df. To be more specific, this new df includes the by-state information on 
+After performing the above transformations, we combined the derived and some raw columns to create the demographics dataset with the flu shot coverage data and form a more concise data frame called "demo_df". We did further feature engineering in this data frame. To be more specific, this new data frame includes the by-state information on 
 
-+ number of people who attained at least a high school or equivalent degree; 
-+ population over 18;
-+ ratio of population over 18 that received at least a high school or equivalent degree (engineered by dividing 1 by 2);
-+ total population;
-+ population under 14;
-+ ratio of children (<=14);
-+ population over 65;
-+ ratio of people >=65;
-+ median household income;
-+ mean household income;
-+ household poverty rate;
-+ household wealth rate.
++ number of people who attained at least a high school or equivalent degree
++ population over 18
++ ratio of population over 18 that received at least a high school or equivalent degree (engineered by dividing 1 by 2)
++ total population
++ population under 14
++ ratio of children (<=14)
++ population over 65
++ ratio of people >=65
++ median household income
++ mean household income
++ household poverty rate
++ household wealth rate
 
-The reason for doing this is that the original datasets are too cubersome for us to work with. 
+The reason for doing this is that the original datasets are too cumbersome for us to work with. 
 
 ### us_by_year, an Enhanced Dataframe
-This df is extracted from the flu shot dataset. In this dataframe, we only keep the records for national wide flu coverage for each month, from 2009 to 2021, and only records that is related to seasonal influenza, since H1N1 vaccines are only provided in earlier years. Also, we only care about the age metric, which should be ">6" months, which will include all eligible people. Again, the reason we extract this specific dataframe is to eliminate unnecessary entries for easier plotting, while keeping the original dataframe the same in case we need to gather other data from it.
+This data frame is extracted from the flu shot dataset. In this data frame, we only keep the records for nationwide flu coverage for each month (2009 to 2021) and only records that are related to seasonal influenza, since H1N1 vaccines are only provided in earlier years. We also only care about the age metric, which should be ">6" months which includes all eligible individuals. Again, the reason we extract this specific data frame is to eliminate unnecessary entries for easier plotting, while keeping the original data frame the same in case we need to gather other data from it.
 
 ## Missing value analysis
 
