@@ -1,9 +1,9 @@
 --- 
-title: "Vaccination Coverage Demographics"
+title: "Flu Vaccination Coverage Demographics"
 author: "Ethan Evans, Longyuan Gao, Jianxun Guo"
 date: "`r Sys.Date()`"
 site: bookdown::bookdown_site
 ---
 
 # Introduction
-In this project we intend to find some relationships between influenza vaccine coverage and other demographic features, including education, gender, population, etc. in the United States in recent years. If possible, we also plan to dig deeper into the impact of COVID-19 on the flu vaccination coverage.
+In this project, we intend to find relationships between influenza vaccine coverage and socioeconomic/demographic features, including education, race, age, population, and income in the United States in recent years. We also plan to dig deeper into the impact of COVID-19 on the flu vaccination coverage. Through looking at case data, coverage rates, and time series data, we hope to generate conclusions about the state of the flu in the United States and influence policy makers to utilize data-driven decisions to improve the health of communities.
